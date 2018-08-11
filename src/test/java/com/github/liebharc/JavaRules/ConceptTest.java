@@ -2,7 +2,6 @@ package com.github.liebharc.JavaRules;
 
 
 import com.github.liebharc.JavaRules.model.ModelFactory;
-import com.github.liebharc.JavaRules.model.SchoolClass;
 import com.github.liebharc.JavaRules.verbs.*;
 import org.junit.Assert;
 import org.junit.Before;
@@ -95,25 +94,66 @@ public class ConceptTest {
     public void timeAggregation() {
         signUpAllStudents();
 
-        engine.process(new TimeHasPassed(1));
+        engine.process(new StudentAttendsAClass(david, schoolClass));
+        engine.process(new ASchoolDayHasPassed());
         Assert.assertEquals(2, dataStore.getStudyTime(david));
 
         engine.process(new StudentBecomesSick(david));
-        engine.process(new TimeHasPassed(1));
+        engine.process(new ASchoolDayHasPassed());
         Assert.assertEquals(2, dataStore.getStudyTime(david));
 
         engine.process(new StudentReturnsFromSickness(david));
-        engine.process(new TimeHasPassed(1));
+        engine.process(new StudentAttendsAClass(david, schoolClass));
+        engine.process(new ASchoolDayHasPassed());
         Assert.assertEquals(4, dataStore.getStudyTime(david));
 
 
         engine.process(new StudentJoinsAClass(david, anotherSchoolClass));
-        engine.process(new TimeHasPassed(1));
+        engine.process(new StudentAttendsAClass(david, schoolClass));
+        engine.process(new StudentAttendsAClass(david, anotherSchoolClass));
+        engine.process(new ASchoolDayHasPassed());
         Assert.assertEquals(9, dataStore.getStudyTime(david));
 
         engine.process(new StudentResignsFromClass(david, schoolClass));
-        engine.process(new TimeHasPassed(1));
+        engine.process(new StudentAttendsAClass(david, anotherSchoolClass));
+        engine.process(new ASchoolDayHasPassed());
         Assert.assertEquals(12, dataStore.getStudyTime(david));
+
+    }
+
+
+    @Test
+    public void countClassMisses() {
+        signUpAllStudents();
+
+        engine.process(new StudentAttendsAClass(david, schoolClass));
+        engine.process(new ASchoolDayHasPassed());
+        Assert.assertEquals(0, dataStore.getNumberOfMissedClasses(david));
+
+        engine.process(new StudentBecomesSick(david));
+        engine.process(new ASchoolDayHasPassed());
+        Assert.assertEquals(0, dataStore.getNumberOfMissedClasses(david));
+
+        engine.process(new StudentReturnsFromSickness(david));
+        engine.process(new ASchoolDayHasPassed());
+        Assert.assertEquals(1, dataStore.getNumberOfMissedClasses(david));
+
+
+        engine.process(new StudentJoinsAClass(david, anotherSchoolClass));
+        engine.process(new StudentAttendsAClass(david, schoolClass));
+        engine.process(new StudentAttendsAClass(david, anotherSchoolClass));
+        engine.process(new ASchoolDayHasPassed());
+        Assert.assertEquals(1, dataStore.getNumberOfMissedClasses(david));
+
+        engine.process(new StudentResignsFromClass(david, schoolClass));
+        engine.process(new StudentAttendsAClass(david, anotherSchoolClass));
+        engine.process(new ASchoolDayHasPassed());
+        Assert.assertEquals(1, dataStore.getNumberOfMissedClasses(david));
+
+    }
+
+    @Test
+    public void orderIndependentOnSingleCall() {
 
     }
 

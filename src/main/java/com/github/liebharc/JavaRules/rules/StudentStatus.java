@@ -1,24 +1,21 @@
 package com.github.liebharc.JavaRules.rules;
 
-import com.github.liebharc.JavaRules.LazyDataStore;
+import com.github.liebharc.JavaRules.DataStore;
 import com.github.liebharc.JavaRules.model.SchoolClass;
 import com.github.liebharc.JavaRules.verbs.*;
 
-public class Sickness implements Rule {
-    private LazyDataStore store;
+public class StudentStatus implements Rule {
+    private DataStore store;
 
-    public Sickness(LazyDataStore status) {
+    public StudentStatus(DataStore status) {
         this.store = status;
     }
 
     @Override
-    public Result process(Verb verb) {
+    public void process(Verb verb) {
         final boolean sicknessStarts  = verb instanceof StudentBecomesSick;
         final boolean sicknessEnds  = verb instanceof StudentReturnsFromSickness;
-        final boolean isChange = sicknessStarts || sicknessEnds;
-        if (!isChange) {
-            return Result.NoAction;
-        }
+        final boolean hasAttended  = verb instanceof StudentAttendsAClass;
 
         if (sicknessStarts) {
             setInactive((StudentBecomesSick) verb);
@@ -28,18 +25,26 @@ public class Sickness implements Rule {
             setActive((StudentReturnsFromSickness) verb);
         }
 
-        return Result.Done;
+        if (hasAttended) {
+            markAsAttended((StudentAttendsAClass)verb);
+        }
     }
 
     private void setInactive(StudentBecomesSick verb) {
-        for (SchoolClass schoolClass : store.getAssignedClasses(verb.getStudent()).get()) {
+        for (SchoolClass schoolClass : store.getAssignedClasses(verb.getStudent())) {
             store.markStudentAsInactive(schoolClass.getId(), verb.getStudent());
         }
     }
 
     private void setActive(StudentReturnsFromSickness verb) {
-        for (SchoolClass schoolClass : store.getAssignedClasses(verb.getStudent()).get()) {
+        for (SchoolClass schoolClass : store.getAssignedClasses(verb.getStudent())) {
             store.markStudentAsActive(schoolClass.getId(), verb.getStudent());
+        }
+    }
+
+    private void markAsAttended(StudentAttendsAClass verb) {
+        for (SchoolClass schoolClass : store.getAssignedClasses(verb.getStudent())) {
+            store.markAsAttended(schoolClass.getId(), verb.getStudent());
         }
     }
 }

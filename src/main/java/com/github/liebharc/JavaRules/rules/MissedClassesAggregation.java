@@ -6,10 +6,13 @@ import com.github.liebharc.JavaRules.model.Student;
 import com.github.liebharc.JavaRules.verbs.ASchoolDayHasPassed;
 import com.github.liebharc.JavaRules.verbs.Verb;
 
-public class TimeAggregation implements  Rule{
+import java.util.ArrayList;
+import java.util.List;
+
+public class MissedClassesAggregation implements Rule {
     private DataStore store;
 
-    public TimeAggregation(DataStore status) {
+    public MissedClassesAggregation(DataStore status) {
         this.store = status;
     }
 
@@ -21,9 +24,15 @@ public class TimeAggregation implements  Rule{
         }
 
         for (SchoolClass schoolClass : store.getActiveClasses()) {
-            for (Student student : store.getActiveStudents(schoolClass.getId())) {
-                store.addStudyTime(student.getId(), schoolClass.getHoursADay());
+            List<Student> activeStudents = store.getActiveStudents(schoolClass.getId());
+            List<Student> attendees = store.getAttendees(schoolClass.getId());
+            List<Student> misses = new ArrayList<>(activeStudents);
+            misses.removeAll(attendees);
+            for (Student miss : misses) {
+                store.incrementClassesMissed(miss.getId());
             }
+
+            store.clearAttendes(schoolClass.getId());
         }
     }
 }

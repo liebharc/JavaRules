@@ -2,8 +2,6 @@ package com.github.liebharc.JavaRules;
 
 import com.github.liebharc.JavaRules.model.SchoolClass;
 import com.github.liebharc.JavaRules.model.Student;
-import com.github.liebharc.JavaRules.model.StudyTime;
-import com.github.liebharc.JavaRules.verbs.Verb;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -17,7 +15,11 @@ public class DataStore {
 
     private Map<Long, List<Student>> activeStudents = new HashMap<>();
 
-    public Map<Long, StudyTime> studyTimes = new HashMap<>();
+    private Map<Long, List<Student>> attendies = new HashMap<>();
+
+    public Map<Long, Integer> studyTimes = new HashMap<>();
+
+    public Map<Long, Integer> classesMissed = new HashMap<>();
 
     public List<SchoolClass> getAssignedClasses(long studentId)  {
         return getClassesForStudent(assignedStudents, studentId);
@@ -58,6 +60,24 @@ public class DataStore {
         removeFromMap(assignedStudents, classes.get(schoolClass), students.get(student));
     }
 
+    public void markAsAttended(long schoolClass, long student) {
+        addToMap(attendies, classes.get(schoolClass), students.get(student));
+    }
+
+    public void clearAttendes(long schoolClass) {
+        attendies.remove(schoolClass);
+    }
+
+    public List<Student> getAttendees(long schoolClass) {
+        List<Student> students = attendies.get(schoolClass);
+        if (students == null)  {
+            return new ArrayList<>();
+        }
+
+        return students;
+    }
+
+
     public void markStudentAsActive(long schoolClass, long student) {
         addToMap(activeStudents, classes.get(schoolClass), students.get(student));
     }
@@ -66,20 +86,37 @@ public class DataStore {
         removeFromMap(activeStudents, classes.get(schoolClass), students.get(student));
     }
 
-    public void addStudyTime(long student, long time) {
+    public void addStudyTime(long student, int time) {
         if (studyTimes.containsKey(student)) {
-            time += studyTimes.get(student).getTime();
+            time += studyTimes.get(student);
         }
 
-        studyTimes.put(student, new StudyTime(student, time));
+        studyTimes.put(student, time);
     }
 
-    public long getStudyTime(long student) {
-        StudyTime studyTime = studyTimes.get(student);
+    public int getStudyTime(long student) {
+        Integer studyTime = studyTimes.get(student);
         if (studyTime == null) {
             return 0;
         }
-        return studyTime.getTime();
+        return studyTime;
+    }
+
+    public void incrementClassesMissed(long student) {
+        int missed = 1;
+        if (classesMissed.containsKey(student)) {
+            missed += classesMissed.get(student);
+        }
+
+        classesMissed.put(student, missed);
+    }
+
+    public long getNumberOfMissedClasses(long student) {
+        Integer missed = classesMissed.get(student);
+        if (missed == null) {
+            return 0;
+        }
+        return missed;
     }
 
     public boolean isAssigned(Long student, Long schoolClass) {

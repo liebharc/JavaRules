@@ -1,14 +1,7 @@
 package com.github.liebharc.JavaRules.verbs;
 
-public class StudentBecomesSick implements Verb {
-    private long student;
-
+public class StudentBecomesSick extends StudentVerb {
     public StudentBecomesSick(long student) {
-
-        this.student = student;
-    }
-
-    public long getStudent() {
-        return student;
+        super(student);
     }
 }

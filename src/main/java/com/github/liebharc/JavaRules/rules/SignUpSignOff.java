@@ -1,25 +1,25 @@
 package com.github.liebharc.JavaRules.rules;
 
-import com.github.liebharc.JavaRules.LazyDataStore;
+import com.github.liebharc.JavaRules.DataStore;
 import com.github.liebharc.JavaRules.verbs.StudentJoinsAClass;
 import com.github.liebharc.JavaRules.verbs.StudentResignsFromClass;
 import com.github.liebharc.JavaRules.verbs.Verb;
 
 public class SignUpSignOff implements Rule {
 
-    private LazyDataStore store;
+    private DataStore store;
 
-    public SignUpSignOff(LazyDataStore status) {
+    public SignUpSignOff(DataStore status) {
         this.store = status;
     }
 
     @Override
-    public Result process(Verb verb) {
+    public void process(Verb verb) {
         final boolean isSignOn  = verb instanceof StudentJoinsAClass;
         final boolean isSignOff  = verb instanceof StudentResignsFromClass;
         final boolean isChange = isSignOn || isSignOff;
         if (!isChange) {
-            return Result.NoAction;
+            return ;
         }
 
         if (isSignOn) {
@@ -29,8 +29,6 @@ public class SignUpSignOff implements Rule {
         if (isSignOff) {
             signOff((StudentResignsFromClass) verb);
         }
-
-        return Result.Done;
     }
 
     private void signOff(StudentResignsFromClass verb) {
