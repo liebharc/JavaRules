@@ -14,12 +14,8 @@ public class LazyDataStore {
         this.dataStore = dataStore;
     }
 
-    public Lazy<SchoolClass> getWorkplace(Verb verb) {
-        return new Lazy<>(() -> dataStore.getWorkplace(verb));
-    }
-
-    public Lazy<List<Student>> getOperations(Lazy<SchoolClass> workplace) {
-        return new Lazy<>(() -> dataStore.getStudents(workplace.get()));
+    public Lazy<List<SchoolClass>> getClasses(long studentId) {
+        return new Lazy<>(() -> dataStore.getClasses(studentId));
     }
 
     public void assignStudent(long schoolClass, long student) {

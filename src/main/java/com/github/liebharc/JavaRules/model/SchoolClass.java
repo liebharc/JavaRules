@@ -3,11 +3,13 @@ package com.github.liebharc.JavaRules.model;
 public class SchoolClass {
     private Long id;
     private String name;
+    private int hoursADay;
 
-    public SchoolClass(Long id, String name) {
+    public SchoolClass(Long id, String name, int hoursADay) {
         this.id = id;
 
         this.name = name;
+        this.hoursADay = hoursADay;
     }
 
     public String getName() {
@@ -16,6 +18,10 @@ public class SchoolClass {
 
     public Long getId() {
         return id;
+    }
+
+    public int getHoursADay() {
+        return hoursADay;
     }
 
     @Override

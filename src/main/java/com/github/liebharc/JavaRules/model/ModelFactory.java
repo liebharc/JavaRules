@@ -3,8 +3,8 @@ package com.github.liebharc.JavaRules.model;
 public class ModelFactory {
     private long idGenerator = 0;
 
-    public SchoolClass newClass(String name) {
-        return new SchoolClass(idGenerator++, name);
+    public SchoolClass newClass(String name, int hoursADay) {
+        return new SchoolClass(idGenerator++, name, hoursADay);
     }
 
     public Student newStudent(String firstName, String lastName) {

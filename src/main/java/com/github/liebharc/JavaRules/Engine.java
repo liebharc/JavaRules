@@ -3,6 +3,7 @@ package com.github.liebharc.JavaRules;
 import com.github.liebharc.JavaRules.model.SchoolClass;
 import com.github.liebharc.JavaRules.model.Student;
 import com.github.liebharc.JavaRules.rules.Rule;
+import com.github.liebharc.JavaRules.rules.Sickness;
 import com.github.liebharc.JavaRules.rules.SignUpSignOff;
 import com.github.liebharc.JavaRules.verbs.Verb;
 import com.github.liebharc.JavaRules.verbs.TimeHasPassed;
@@ -19,7 +20,8 @@ public class Engine {
         this.store = new LazyDataStore(store);
 
         rules = new Rule[] {
-                new SignUpSignOff(this.store)
+                new SignUpSignOff(this.store),
+                new Sickness(this.store)
         };
     }
 

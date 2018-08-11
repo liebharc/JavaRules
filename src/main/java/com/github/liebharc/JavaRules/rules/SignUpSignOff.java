@@ -7,10 +7,10 @@ import com.github.liebharc.JavaRules.verbs.Verb;
 
 public class SignUpSignOff implements Rule {
 
-    private LazyDataStore status;
+    private LazyDataStore store;
 
     public SignUpSignOff(LazyDataStore status) {
-        this.status = status;
+        this.store = status;
     }
 
     @Override
@@ -27,21 +27,19 @@ public class SignUpSignOff implements Rule {
         }
 
         if (isSignOff) {
-            signOff((StudentJoinsAClass) verb);
+            signOff((StudentResignsFromClass) verb);
         }
 
         return Result.Done;
     }
 
-    private void signOff(StudentJoinsAClass verb) {
-        final StudentJoinsAClass studentJoinsAClass = verb;
-        status.markStudentAsInactive(studentJoinsAClass.getClassId(), studentJoinsAClass.getStudent());
-        status.unassignStudent( studentJoinsAClass.getClassId(), studentJoinsAClass.getStudent());
+    private void signOff(StudentResignsFromClass verb) {
+        store.markStudentAsInactive(verb.getClassId(), verb.getStudent());
+        store.unassignStudent( verb.getClassId(), verb.getStudent());
     }
 
     private void signOn(StudentJoinsAClass verb) {
-        final StudentJoinsAClass studentJoinsAClass = verb;
-        status.assignStudent( studentJoinsAClass.getClassId(), studentJoinsAClass.getStudent());
-        status.markStudentAsActive( studentJoinsAClass.getClassId(), studentJoinsAClass.getStudent());
+        store.assignStudent( verb.getClassId(), verb.getStudent());
+        store.markStudentAsActive( verb.getClassId(), verb.getStudent());
     }
 }

@@ -1,9 +1,9 @@
 package com.github.liebharc.JavaRules.verbs;
 
-public class StudentBecomesSick implements Verb {
+public class StudentReturnsFromSickness implements Verb {
     private long student;
 
-    public StudentBecomesSick(long student) {
+    public StudentReturnsFromSickness(long student) {
 
         this.student = student;
     }

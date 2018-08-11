@@ -16,13 +16,22 @@ public class DataStore {
 
     private Map<Long, List<Student>> activeStudents = new HashMap<>();
 
-    public SchoolClass getWorkplace(Verb verb) {
-        return classes.get(verb.getClassId());
+
+
+    public List<SchoolClass> getClasses(long studentId)  {
+        // Bad performance here is actually a good example to avoid reevaluation of the method
+        final List<SchoolClass> result = new ArrayList<>();
+
+        for (Long classId : assignedStudents.keySet()) {
+            final List<Student> students = assignedStudents.get(classId);
+            if (students.stream().anyMatch(s -> s.getId() == studentId)) {
+                result.add(classes.get(classId));
+            }
+        }
+
+        return result;
     }
 
-    public List<Student> getStudents(SchoolClass schoolClass) {
-        return assignedStudents.get(schoolClass.getId());
-    }
 
     public Map<Long, StudyTime> studyTimes = new HashMap<>();
 
