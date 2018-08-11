@@ -5,6 +5,7 @@ import com.github.liebharc.JavaRules.model.Student;
 import com.github.liebharc.JavaRules.rules.Rule;
 import com.github.liebharc.JavaRules.rules.Sickness;
 import com.github.liebharc.JavaRules.rules.SignUpSignOff;
+import com.github.liebharc.JavaRules.rules.TimeAggregation;
 import com.github.liebharc.JavaRules.verbs.Verb;
 import com.github.liebharc.JavaRules.verbs.TimeHasPassed;
 import com.github.liebharc.JavaRules.verbs.StudentBecomesSick;
@@ -21,7 +22,8 @@ public class Engine {
 
         rules = new Rule[] {
                 new SignUpSignOff(this.store),
-                new Sickness(this.store)
+                new Sickness(this.store),
+                new TimeAggregation(this.store)
         };
     }
 

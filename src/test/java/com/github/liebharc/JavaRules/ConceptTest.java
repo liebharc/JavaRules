@@ -3,10 +3,7 @@ package com.github.liebharc.JavaRules;
 
 import com.github.liebharc.JavaRules.model.ModelFactory;
 import com.github.liebharc.JavaRules.model.SchoolClass;
-import com.github.liebharc.JavaRules.verbs.StudentBecomesSick;
-import com.github.liebharc.JavaRules.verbs.StudentJoinsAClass;
-import com.github.liebharc.JavaRules.verbs.StudentResignsFromClass;
-import com.github.liebharc.JavaRules.verbs.StudentReturnsFromSickness;
+import com.github.liebharc.JavaRules.verbs.*;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -92,6 +89,32 @@ public class ConceptTest {
 
         Assert.assertFalse(dataStore.isAssigned(david, anotherSchoolClass));
         Assert.assertFalse(dataStore.isActive(david, anotherSchoolClass));
+    }
+
+    @Test
+    public void timeAggregation() {
+        signUpAllStudents();
+
+        engine.process(new TimeHasPassed(1));
+        Assert.assertEquals(2, dataStore.getStudyTime(david));
+
+        engine.process(new StudentBecomesSick(david));
+        engine.process(new TimeHasPassed(1));
+        Assert.assertEquals(2, dataStore.getStudyTime(david));
+
+        engine.process(new StudentReturnsFromSickness(david));
+        engine.process(new TimeHasPassed(1));
+        Assert.assertEquals(4, dataStore.getStudyTime(david));
+
+
+        engine.process(new StudentJoinsAClass(david, anotherSchoolClass));
+        engine.process(new TimeHasPassed(1));
+        Assert.assertEquals(9, dataStore.getStudyTime(david));
+
+        engine.process(new StudentResignsFromClass(david, schoolClass));
+        engine.process(new TimeHasPassed(1));
+        Assert.assertEquals(12, dataStore.getStudyTime(david));
+
     }
 
     private void signUpAllStudents() {

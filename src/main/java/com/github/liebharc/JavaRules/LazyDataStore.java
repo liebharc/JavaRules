@@ -2,7 +2,6 @@ package com.github.liebharc.JavaRules;
 
 import com.github.liebharc.JavaRules.model.SchoolClass;
 import com.github.liebharc.JavaRules.model.Student;
-import com.github.liebharc.JavaRules.verbs.Verb;
 
 import java.util.List;
 
@@ -14,8 +13,16 @@ public class LazyDataStore {
         this.dataStore = dataStore;
     }
 
-    public Lazy<List<SchoolClass>> getClasses(long studentId) {
-        return new Lazy<>(() -> dataStore.getClasses(studentId));
+    public Lazy<List<SchoolClass>> getAssignedClasses(long studentId) {
+        return new Lazy<>(() -> dataStore.getAssignedClasses(studentId));
+    }
+
+    public  Lazy<List<Student>> getActiveStudents(long classId) {
+        return new Lazy(() -> dataStore.getActiveStudents(classId));
+    }
+
+    public  Lazy<List<SchoolClass>> getActiveClasses() {
+        return  new Lazy(() -> dataStore.getActiveClasses());
     }
 
     public void assignStudent(long schoolClass, long student) {

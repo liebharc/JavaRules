@@ -32,13 +32,13 @@ public class Sickness implements Rule {
     }
 
     private void setInactive(StudentBecomesSick verb) {
-        for (SchoolClass schoolClass : store.getClasses(verb.getStudent()).get()) {
+        for (SchoolClass schoolClass : store.getAssignedClasses(verb.getStudent()).get()) {
             store.markStudentAsInactive(schoolClass.getId(), verb.getStudent());
         }
     }
 
     private void setActive(StudentReturnsFromSickness verb) {
-        for (SchoolClass schoolClass : store.getClasses(verb.getStudent()).get()) {
+        for (SchoolClass schoolClass : store.getAssignedClasses(verb.getStudent()).get()) {
             store.markStudentAsActive(schoolClass.getId(), verb.getStudent());
         }
     }

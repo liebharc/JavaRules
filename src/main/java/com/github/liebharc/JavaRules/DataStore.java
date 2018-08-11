@@ -6,6 +6,7 @@ import com.github.liebharc.JavaRules.model.StudyTime;
 import com.github.liebharc.JavaRules.verbs.Verb;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class DataStore {
     private Map<Long, SchoolClass> classes = new HashMap<>();
@@ -16,14 +17,18 @@ public class DataStore {
 
     private Map<Long, List<Student>> activeStudents = new HashMap<>();
 
+    public Map<Long, StudyTime> studyTimes = new HashMap<>();
 
+    public List<SchoolClass> getAssignedClasses(long studentId)  {
+        return getClassesForStudent(assignedStudents, studentId);
+    }
 
-    public List<SchoolClass> getClasses(long studentId)  {
+    private  List<SchoolClass> getClassesForStudent( Map<Long, List<Student>> map, long studentId) {
         // Bad performance here is actually a good example to avoid reevaluation of the method
         final List<SchoolClass> result = new ArrayList<>();
 
-        for (Long classId : assignedStudents.keySet()) {
-            final List<Student> students = assignedStudents.get(classId);
+        for (Long classId : map.keySet()) {
+            final List<Student> students = map.get(classId);
             if (students.stream().anyMatch(s -> s.getId() == studentId)) {
                 result.add(classes.get(classId));
             }
@@ -32,8 +37,18 @@ public class DataStore {
         return result;
     }
 
+    public List<Student> getActiveStudents(long classId)  {
+        List<Student> students = activeStudents.get(classId);
+        if (students == null) {
+            return new ArrayList<>();
+        }
 
-    public Map<Long, StudyTime> studyTimes = new HashMap<>();
+        return students;
+    }
+
+    public List<SchoolClass> getActiveClasses() {
+        return classes.values().stream().collect(Collectors.toList());
+    }
 
     public void assignStudent(long schoolClass, long student) {
         addToMap(assignedStudents, classes.get(schoolClass), students.get(student));
@@ -60,9 +75,12 @@ public class DataStore {
     }
 
     public long getStudyTime(long student) {
-        return studyTimes.get(student).getTime();
+        StudyTime studyTime = studyTimes.get(student);
+        if (studyTime == null) {
+            return 0;
+        }
+        return studyTime.getTime();
     }
-
 
     public boolean isAssigned(Long student, Long schoolClass) {
         return contains(assignedStudents, student, schoolClass);
