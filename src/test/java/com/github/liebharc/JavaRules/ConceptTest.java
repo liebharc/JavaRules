@@ -2,6 +2,7 @@ package com.github.liebharc.JavaRules;
 
 
 import com.github.liebharc.JavaRules.model.ModelFactory;
+import com.github.liebharc.JavaRules.model.ReportStore;
 import com.github.liebharc.JavaRules.verbs.*;
 import org.junit.Assert;
 import org.junit.Before;
@@ -18,6 +19,7 @@ public class ConceptTest {
     private long peter;
     private long jodie;
     private Engine engine;
+    private ReportStore reports;
 
     @Before
     public void setupAClass() {
@@ -29,7 +31,8 @@ public class ConceptTest {
         matt = dataStore.store(registration.newStudent("Matt" ,"Smith"));
         peter = dataStore.store(registration.newStudent("Peter" ,"Capaldi"));;
         jodie = dataStore.store(registration.newStudent("Jodie" ,"Whittaker"));
-        engine = new Engine(dataStore);
+        reports = new ReportStore();
+        engine = new Engine(dataStore, reports);
     }
 
     @Test
@@ -198,6 +201,22 @@ public class ConceptTest {
 
         Assert.assertFalse(dataStore.isAssigned(david, schoolClass));
         Assert.assertFalse(dataStore.isActive(david, schoolClass));
+    }
+
+    @Test
+    public void ongoingReport() {
+        engine.process(new StudentJoinsAClass(david, schoolClass));
+        Assert.assertEquals("David attended class 5-1", reports.getReport(david));
+    }
+
+    @Test
+    public void successfulCompletionReport() {
+
+    }
+
+    @Test
+    public void failureCompletionReport() {
+
     }
 
     private void signUpAllStudents() {
