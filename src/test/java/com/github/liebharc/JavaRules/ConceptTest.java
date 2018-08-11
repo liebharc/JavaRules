@@ -205,9 +205,10 @@ public class ConceptTest {
     }
 
     @Test
-    @Ignore
     public void ongoingReport() {
         engine.process(new StudentJoinsAClass(david, schoolClass));
+        engine.process(new StudentAttendsAClass(david, schoolClass));
+        engine.process(new ASchoolDayHasPassed());
         Assert.assertEquals("David attended class 5-1", reports.getReport(david));
     }
 
