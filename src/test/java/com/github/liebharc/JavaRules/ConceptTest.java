@@ -182,6 +182,24 @@ public class ConceptTest {
         Assert.assertFalse(dataStore.isActive(david, anotherSchoolClass));
     }
 
+    @Test
+    public void studentsMissedTooManyClasses() {
+
+        signUpAllStudents();
+        engine.process(new ASchoolDayHasPassed());
+        engine.process(new ASchoolDayHasPassed());
+        engine.process(new ASchoolDayHasPassed());
+        engine.process(new ASchoolDayHasPassed());
+
+        Assert.assertTrue(dataStore.isAssigned(david, schoolClass));
+        Assert.assertTrue(dataStore.isActive(david, schoolClass));
+
+        engine.process(new ASchoolDayHasPassed());
+
+        Assert.assertFalse(dataStore.isAssigned(david, schoolClass));
+        Assert.assertFalse(dataStore.isActive(david, schoolClass));
+    }
+
     private void signUpAllStudents() {
         engine.process(new StudentJoinsAClass(david, schoolClass));
         engine.process(new StudentJoinsAClass(matt, schoolClass));

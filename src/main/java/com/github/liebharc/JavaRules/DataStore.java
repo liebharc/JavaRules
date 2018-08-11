@@ -111,7 +111,7 @@ public class DataStore {
         classesMissed.put(student, missed);
     }
 
-    public long getNumberOfMissedClasses(long student) {
+    public int getNumberOfMissedClasses(long student) {
         Integer missed = classesMissed.get(student);
         if (missed == null) {
             return 0;

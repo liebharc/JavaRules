@@ -18,7 +18,7 @@ public class Engine {
                 new StudentStatus(this.store),
                 missedClassesAggregation,
                 timeAggregation,
-                new ClassCompletion(this.store, timeAggregation),
+                new ClassCompletion(this.store, timeAggregation, missedClassesAggregation),
                 new InitRule(this.store),
         };
     }
