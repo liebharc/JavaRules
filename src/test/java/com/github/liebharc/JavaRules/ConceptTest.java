@@ -121,6 +121,13 @@ public class ConceptTest {
 
     }
 
+    @Test
+    public void missesDoNotGiveTime() {
+        signUpAllStudents();
+
+        engine.process(new ASchoolDayHasPassed());
+        Assert.assertEquals(0, dataStore.getStudyTime(david));
+    }
 
     @Test
     public void countClassMisses() {
@@ -153,8 +160,26 @@ public class ConceptTest {
     }
 
     @Test
-    public void orderIndependentOnSingleCall() {
+    public void PassAClass() {
+        engine.process(new StudentJoinsAClass(david, anotherSchoolClass));
 
+        engine.process(new StudentAttendsAClass(david, anotherSchoolClass));
+        engine.process(new ASchoolDayHasPassed());
+
+        engine.process(new StudentAttendsAClass(david, anotherSchoolClass));
+        engine.process(new ASchoolDayHasPassed());
+
+        engine.process(new StudentAttendsAClass(david, anotherSchoolClass));
+        engine.process(new ASchoolDayHasPassed());
+
+        Assert.assertTrue(dataStore.isAssigned(david, anotherSchoolClass));
+        Assert.assertTrue(dataStore.isActive(david, anotherSchoolClass));
+
+        engine.process(new StudentAttendsAClass(david, anotherSchoolClass));
+        engine.process(new ASchoolDayHasPassed());
+
+        Assert.assertFalse(dataStore.isAssigned(david, anotherSchoolClass));
+        Assert.assertFalse(dataStore.isActive(david, anotherSchoolClass));
     }
 
     private void signUpAllStudents() {

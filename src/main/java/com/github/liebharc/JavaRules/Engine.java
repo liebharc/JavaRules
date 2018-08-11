@@ -11,11 +11,15 @@ public class Engine {
 
         this.store = store;
 
+        MissedClassesAggregation missedClassesAggregation = new MissedClassesAggregation(this.store);
+        TimeAggregation timeAggregation = new TimeAggregation(this.store, missedClassesAggregation);
         rules = new Rule[] {
                 new SignUpSignOff(this.store),
                 new StudentStatus(this.store),
-                new TimeAggregation(this.store),
-                new MissedClassesAggregation(this.store)
+                missedClassesAggregation,
+                timeAggregation,
+                new ClassCompletion(this.store, timeAggregation),
+                new InitRule(this.store),
         };
     }
 
