@@ -2,13 +2,14 @@ package com.github.liebharc.JavaRules.rules;
 
 import com.github.liebharc.JavaRules.DataStore;
 import com.github.liebharc.JavaRules.Logger;
+import com.github.liebharc.JavaRules.deduction.Facts;
 import com.github.liebharc.JavaRules.model.SchoolClass;
 import com.github.liebharc.JavaRules.verbs.ASchoolDayHasPassed;
 import com.github.liebharc.JavaRules.verbs.Verb;
 
 import java.util.List;
 
-public class InitRule implements Rule {
+public class InitRule implements InterferenceStep {
     private final Logger logger = new Logger(this);
     private DataStore store;
 
@@ -17,7 +18,7 @@ public class InitRule implements Rule {
     }
 
     @Override
-    public void process(Verb verb) {
+    public void process(Verb verb, Facts facts) {
         if (verb instanceof ASchoolDayHasPassed) {
             logger.log("Clearing store");
             for (SchoolClass schoolClass : store.getActiveClasses()) {

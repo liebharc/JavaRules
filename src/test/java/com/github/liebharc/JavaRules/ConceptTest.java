@@ -6,6 +6,7 @@ import com.github.liebharc.JavaRules.model.ReportStore;
 import com.github.liebharc.JavaRules.verbs.*;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 public class ConceptTest {
@@ -204,6 +205,7 @@ public class ConceptTest {
     }
 
     @Test
+    @Ignore
     public void ongoingReport() {
         engine.process(new StudentJoinsAClass(david, schoolClass));
         Assert.assertEquals("David attended class 5-1", reports.getReport(david));

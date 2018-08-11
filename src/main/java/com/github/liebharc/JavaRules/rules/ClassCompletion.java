@@ -2,43 +2,42 @@ package com.github.liebharc.JavaRules.rules;
 
 import com.github.liebharc.JavaRules.DataStore;
 import com.github.liebharc.JavaRules.Logger;
+import com.github.liebharc.JavaRules.deduction.*;
 import com.github.liebharc.JavaRules.model.SchoolClass;
 import com.github.liebharc.JavaRules.model.Student;
-import com.github.liebharc.JavaRules.providers.AggregatedTimeProvider;
-import com.github.liebharc.JavaRules.providers.MissedClassesProvider;
+import com.github.liebharc.JavaRules.verbs.StudentAttendsAClass;
 import com.github.liebharc.JavaRules.verbs.Verb;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
-public class ClassCompletion implements Rule {
+public class ClassCompletion implements InterferenceStep {
     private final Logger logger = new Logger(this);
     private DataStore store;
-    private AggregatedTimeProvider timeProvider;
-    private MissedClassesProvider missedClassesProvider;
 
-    public ClassCompletion(DataStore status, AggregatedTimeProvider timeProvider, MissedClassesProvider missedClassesProvider) {
+    public ClassCompletion(DataStore status) {
         this.store = status;
-        this.timeProvider = timeProvider;
-        this.missedClassesProvider = missedClassesProvider;
     }
 
+
+
     @Override
-    public void process(Verb verb) {
-        Map<Student, Integer> timeUpdates = timeProvider.getTimeUpdates();
-        for (Student student : timeUpdates.keySet()) {
-            if (timeUpdates.get(student) > 10) {
-                logger.log("Student " + student + " completed his studies");
-                unassignFromAllClasses(student);
+    public void process(Verb verb, Facts facts) {
+        Collection<AggregatedTimeUpdate> timeUpdates = facts.getFacts(AggregatedTimeUpdate.class);
+        for (AggregatedTimeUpdate update : timeUpdates) {
+            if (update.getAttendedTime() > 10) {
+                logger.log("Student " + update.getStudent() + " completed his studies");
+                unassignFromAllClasses(update.getStudent());
             }
         }
 
-        HashMap<Student, Integer> misses = missedClassesProvider.getMisses();
+        Collection<StudentMissedClass> misses = facts.getFacts(StudentMissedClass.class);
 
-        for (Student student : misses.keySet()) {
-            if (misses.get(student) >= 5) {
-                logger.log("Student " + student + " missed too many classes");
-                unassignFromAllClasses(student);
+        for (StudentMissedClass miss : misses) {
+            if (miss.getMisses() >= 5) {
+                logger.log("Student " + miss.getStudent() + " missed too many classes");
+                unassignFromAllClasses(miss.getStudent());
 
             }
         }

@@ -1,5 +1,7 @@
 package com.github.liebharc.JavaRules.model;
 
+import java.util.Objects;
+
 public class SchoolClass {
     private Long id;
     private String name;
@@ -29,5 +31,19 @@ public class SchoolClass {
         return "SchoolClass{" +
                 "name='" + name + '\'' +
                 '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        SchoolClass that = (SchoolClass) o;
+        return Objects.equals(id, that.id);
+    }
+
+    @Override
+    public int hashCode() {
+
+        return Objects.hash(id);
     }
 }

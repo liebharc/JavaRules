@@ -2,11 +2,15 @@ package com.github.liebharc.JavaRules.rules;
 
 import com.github.liebharc.JavaRules.DataStore;
 import com.github.liebharc.JavaRules.Logger;
+import com.github.liebharc.JavaRules.deduction.Fact;
+import com.github.liebharc.JavaRules.deduction.Facts;
 import com.github.liebharc.JavaRules.verbs.StudentJoinsAClass;
 import com.github.liebharc.JavaRules.verbs.StudentResignsFromClass;
 import com.github.liebharc.JavaRules.verbs.Verb;
 
-public class SignUpSignOff implements Rule {
+import java.util.Collection;
+
+public class SignUpSignOff implements InterferenceStep {
     private final Logger logger = new Logger(this);
 
     private DataStore store;
@@ -16,7 +20,7 @@ public class SignUpSignOff implements Rule {
     }
 
     @Override
-    public void process(Verb verb) {
+    public void process(Verb verb, Facts facts) {
         final boolean isSignOn  = verb instanceof StudentJoinsAClass;
         final boolean isSignOff  = verb instanceof StudentResignsFromClass;
         final boolean isChange = isSignOn || isSignOff;

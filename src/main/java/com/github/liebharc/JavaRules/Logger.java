@@ -1,7 +1,6 @@
 package com.github.liebharc.JavaRules;
 
-import com.github.liebharc.JavaRules.rules.Rule;
-import sun.rmi.runtime.Log;
+import com.github.liebharc.JavaRules.rules.InterferenceStep;
 
 public class Logger {
     private Class<?> caller;
@@ -11,7 +10,7 @@ public class Logger {
         this.caller = caller;
     }
 
-    public Logger(Rule caller) {
+    public Logger(InterferenceStep caller) {
 
         this.caller = caller.getClass();
     }

@@ -2,10 +2,14 @@ package com.github.liebharc.JavaRules.rules;
 
 import com.github.liebharc.JavaRules.DataStore;
 import com.github.liebharc.JavaRules.Logger;
+import com.github.liebharc.JavaRules.deduction.Fact;
+import com.github.liebharc.JavaRules.deduction.Facts;
 import com.github.liebharc.JavaRules.model.SchoolClass;
 import com.github.liebharc.JavaRules.verbs.*;
 
-public class StudentStatus implements Rule {
+import java.util.Collection;
+
+public class StudentStatus implements InterferenceStep {
     private final Logger logger = new Logger(this);
     private DataStore store;
 
@@ -14,7 +18,7 @@ public class StudentStatus implements Rule {
     }
 
     @Override
-    public void process(Verb verb) {
+    public void process(Verb verb, Facts facts) {
         final boolean sicknessStarts  = verb instanceof StudentBecomesSick;
         final boolean sicknessEnds  = verb instanceof StudentReturnsFromSickness;
         final boolean hasAttended  = verb instanceof StudentAttendsAClass;

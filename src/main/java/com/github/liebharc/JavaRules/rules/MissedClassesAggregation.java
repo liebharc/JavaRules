@@ -2,47 +2,40 @@ package com.github.liebharc.JavaRules.rules;
 
 import com.github.liebharc.JavaRules.DataStore;
 import com.github.liebharc.JavaRules.Logger;
+import com.github.liebharc.JavaRules.deduction.Fact;
+import com.github.liebharc.JavaRules.deduction.Facts;
+import com.github.liebharc.JavaRules.deduction.StudentAttendedClass;
+import com.github.liebharc.JavaRules.deduction.StudentMissedClass;
 import com.github.liebharc.JavaRules.model.SchoolClass;
 import com.github.liebharc.JavaRules.model.Student;
-import com.github.liebharc.JavaRules.providers.AttendedClassesProvider;
-import com.github.liebharc.JavaRules.providers.MissedClassesProvider;
 import com.github.liebharc.JavaRules.verbs.ASchoolDayHasPassed;
 import com.github.liebharc.JavaRules.verbs.Verb;
 import javafx.util.Pair;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
+import java.util.*;
 
-public class MissedClassesAggregation implements Rule, AttendedClassesProvider, MissedClassesProvider {
+public class MissedClassesAggregation implements InterferenceStep {
     private final Logger logger = new Logger(this);
 
     private DataStore store;
-
-    private List<Pair<Student, SchoolClass>> attendedClasses = new ArrayList<>();
-
-    private HashMap<Student, Integer> misses = new HashMap<>();
 
     public MissedClassesAggregation(DataStore status) {
         this.store = status;
     }
 
     @Override
-    public void process(Verb verb) {
+    public void process(Verb verb, Facts facts) {
         final boolean hasTimePassed = verb instanceof ASchoolDayHasPassed;
         if (!hasTimePassed) {
             return;
         }
 
-        List<Pair<Student, SchoolClass>> attendedClasses = new ArrayList<>();
-        HashMap<Student, Integer> allMisses = new HashMap<>();
         for (SchoolClass schoolClass : store.getActiveClasses()) {
             List<Student> activeStudents = store.getActiveStudents(schoolClass.getId());
             List<Student> attendees = store.getAttendees(schoolClass.getId());
             for (Student attendee : new HashSet<>(attendees)) {
                 logger.log(attendee + " has attended class " + schoolClass);
-                attendedClasses.add(new Pair<>(attendee, schoolClass));
+                facts.add(new StudentAttendedClass(attendee, schoolClass));
             }
 
             List<Student> misses = new ArrayList<>(activeStudents);
@@ -50,21 +43,8 @@ public class MissedClassesAggregation implements Rule, AttendedClassesProvider, 
             for (Student miss : misses) {
                 logger.log(miss + " has missed class " + schoolClass);
                 store.incrementClassesMissed(miss.getId());
-                allMisses.put(miss, store.getNumberOfMissedClasses(miss.getId()));
+                facts.add(new StudentMissedClass(miss, store.getNumberOfMissedClasses(miss.getId())));
             }
         }
-
-        this.attendedClasses = attendedClasses;
-        this.misses = allMisses;
-    }
-
-    @Override
-    public List<Pair<Student, SchoolClass>> getAttendedClasses() {
-        return attendedClasses;
-    }
-
-    @Override
-    public HashMap<Student, Integer> getMisses() {
-        return misses;
     }
 }
