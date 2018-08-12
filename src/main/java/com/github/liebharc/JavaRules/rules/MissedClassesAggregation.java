@@ -36,7 +36,7 @@ public class MissedClassesAggregation implements InterferenceStep {
             for (Student miss : misses) {
                 logger.log(miss + " has missed class " + schoolClass);
                 store.incrementClassesMissed(miss.getId());
-                facts.add(new StudentMissedClass(miss, store.getNumberOfMissedClasses(miss.getId())));
+                facts.add(new StudentMissedClass(miss, schoolClass, store.getNumberOfMissedClasses(miss.getId())));
             }
         }
     }

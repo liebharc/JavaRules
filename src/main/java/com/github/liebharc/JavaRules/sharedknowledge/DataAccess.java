@@ -10,6 +10,8 @@ public interface DataAccess  {
 
     List<Student> getActiveStudents(long classId);
 
+    List<Student> getActiveStudents();
+
     List<SchoolClass> getActiveClasses();
 
     void assignStudent(long schoolClass, long student);

@@ -209,18 +209,63 @@ public class ConceptTest {
         engine.process(new StudentJoinsAClass(david, schoolClass));
         engine.process(new StudentAttendsAClass(david, schoolClass));
         engine.process(new ASchoolDayHasPassed());
-        Assert.assertEquals("David attended class 5-1", reports.getReport(david));
-//        Assert.assertEquals("A day passed", reports.getReport(david));
+        Assert.assertEquals("David attended class 5-1\nA day passed", reports.getReport(david));
     }
 
     @Test
     public void successfulCompletionReport() {
+        engine.process(new StudentJoinsAClass(david, anotherSchoolClass));
 
+        engine.process(new StudentAttendsAClass(david, anotherSchoolClass));
+        engine.process(new ASchoolDayHasPassed());
+
+        engine.process(new StudentAttendsAClass(david, anotherSchoolClass));
+        engine.process(new ASchoolDayHasPassed());
+
+        engine.process(new StudentAttendsAClass(david, anotherSchoolClass));
+        engine.process(new ASchoolDayHasPassed());
+
+        Assert.assertTrue(dataStore.isAssigned(david, anotherSchoolClass));
+        Assert.assertTrue(dataStore.isActive(david, anotherSchoolClass));
+
+        engine.process(new StudentAttendsAClass(david, anotherSchoolClass));
+        engine.process(new ASchoolDayHasPassed());
+
+        final String expected =
+                "David attended class 5-2\n" +
+                        "A day passed\n" +
+                        "David attended class 5-2\n" +
+                        "A day passed\n" +
+                        "David attended class 5-2\n" +
+                        "A day passed\n" +
+                        "David attended class 5-2\n" +
+                        "David completed his classes :)";
+
+        Assert.assertEquals(expected, reports.getReport(david));
     }
 
     @Test
     public void failureCompletionReport() {
+        signUpAllStudents();
+        engine.process(new ASchoolDayHasPassed());
+        engine.process(new ASchoolDayHasPassed());
+        engine.process(new ASchoolDayHasPassed());
+        engine.process(new ASchoolDayHasPassed());
+        engine.process(new ASchoolDayHasPassed());
 
+        final String expected =
+                "David missed class 5-1\n"
+                + "A day passed\n"
+                + "David missed class 5-1\n"
+                + "A day passed\n"
+                + "David missed class 5-1\n"
+                + "A day passed\n"
+                + "David missed class 5-1\n"
+                + "A day passed\n"
+                + "David missed class 5-1\n"
+                + "David got expelled :(";
+
+        Assert.assertEquals(expected, reports.getReport(david));
     }
 
     private void signUpAllStudents() {

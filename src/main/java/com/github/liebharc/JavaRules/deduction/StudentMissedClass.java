@@ -7,10 +7,12 @@ import java.util.Objects;
 
 public class StudentMissedClass implements Fact {
     private final Student student;
+    private SchoolClass schoolClass;
     private int misses;
 
-    public StudentMissedClass(Student student, int misses) {
+    public StudentMissedClass(Student student, SchoolClass schoolClass, int misses) {
         this.student = student;
+        this.schoolClass = schoolClass;
         this.misses = misses;
     }
 
@@ -20,6 +22,10 @@ public class StudentMissedClass implements Fact {
 
     public int getMisses() {
         return misses;
+    }
+
+    public SchoolClass getSchoolClass() {
+        return schoolClass;
     }
 
     @Override

@@ -7,11 +7,17 @@ public class ReportStore {
     private Map<Long, StringBuilder> reports = new HashMap<>();
 
     public void writeReport(long studentId, String text) {
+        boolean firstCall = false;
         if (!reports.containsKey(studentId)) {
+            firstCall = true;
             reports.put(studentId, new StringBuilder());
         }
 
-        reports.get(studentId).append(text);
+        StringBuilder builder = reports.get(studentId);
+        if (!firstCall) {
+            builder.append("\n");
+        }
+        builder.append(text);
     }
 
     public String getReport(long studentId) {

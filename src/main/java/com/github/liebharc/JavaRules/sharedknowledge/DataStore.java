@@ -51,6 +51,13 @@ public class DataStore implements DataAccess {
     }
 
     @Override
+    public List<Student> getActiveStudents() {
+        Set<Student> students = this.getActiveClasses().stream()
+                .flatMap(c -> this.getActiveStudents(c.getId()).stream()).collect(Collectors.toSet());
+        return new ArrayList<>(students);
+    }
+
+    @Override
     public List<SchoolClass> getActiveClasses() {
         return classes.values().stream().collect(Collectors.toList());
     }

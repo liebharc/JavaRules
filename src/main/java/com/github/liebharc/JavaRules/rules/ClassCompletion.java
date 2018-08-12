@@ -19,6 +19,7 @@ public class ClassCompletion implements InterferenceStep {
             if (update.getAttendedTime() > 10) {
                 logger.log("Student " + update.getStudent() + " completed his studies");
                 unassignFromAllClasses(update.getStudent(), facts.getStore());
+                facts.add(new StudentLeaves(update.getStudent(), true));
             }
         }
 
@@ -28,7 +29,7 @@ public class ClassCompletion implements InterferenceStep {
             if (miss.getMisses() >= 5) {
                 logger.log("Student " + miss.getStudent() + " missed too many classes");
                 unassignFromAllClasses(miss.getStudent(), facts.getStore());
-
+                facts.add(new StudentLeaves(miss.getStudent(), false));
             }
         }
     }

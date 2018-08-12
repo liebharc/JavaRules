@@ -3,7 +3,10 @@ package com.github.liebharc.JavaRules.sharedknowledge;
 import com.github.liebharc.JavaRules.model.SchoolClass;
 import com.github.liebharc.JavaRules.model.Student;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 public class DataAccessImpl implements DataAccess {
 
@@ -11,8 +14,9 @@ public class DataAccessImpl implements DataAccess {
 
     private List<SchoolClass> activeClasses;
 
-    public DataAccessImpl(DataStore store) {
+    private List<Student> activeStudents;
 
+    public DataAccessImpl(DataStore store) {
         this.store = store;
     }
 
@@ -24,6 +28,15 @@ public class DataAccessImpl implements DataAccess {
     @Override
     public List<Student> getActiveStudents(long classId) {
         return store.getActiveStudents(classId);
+    }
+
+    @Override
+    public List<Student> getActiveStudents() {
+        if (activeStudents == null) {
+           activeStudents = store.getActiveStudents();
+        }
+
+        return activeStudents;
     }
 
     @Override
@@ -61,11 +74,13 @@ public class DataAccessImpl implements DataAccess {
 
     @Override
     public void markStudentAsActive(long schoolClass, long student) {
+        activeStudents = null;
         store.markStudentAsActive(schoolClass, student);
     }
 
     @Override
     public void markStudentAsInactive(long schoolClass, long student) {
+        activeStudents = null;
         store.markStudentAsInactive(schoolClass, student);
     }
 
