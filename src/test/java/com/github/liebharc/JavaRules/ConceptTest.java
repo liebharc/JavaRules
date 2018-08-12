@@ -9,32 +9,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-public class ConceptTest {
-
-    private DataStore dataStore;
-    private ModelFactory registration;
-    private long schoolClass;
-    private long anotherSchoolClass;
-    private long david;
-    private long matt;
-    private long peter;
-    private long jodie;
-    private Engine engine;
-    private ReportStore reports;
-
-    @Before
-    public void setupAClass() {
-        dataStore = new DataStore();
-        registration = new ModelFactory();
-        schoolClass = dataStore.store(registration.newClass("5-1", 2));
-        anotherSchoolClass = dataStore.store(registration.newClass("5-2", 3));
-        david = dataStore.store(registration.newStudent("David" ,"Tennant"));
-        matt = dataStore.store(registration.newStudent("Matt" ,"Smith"));
-        peter = dataStore.store(registration.newStudent("Peter" ,"Capaldi"));;
-        jodie = dataStore.store(registration.newStudent("Jodie" ,"Whittaker"));
-        reports = new ReportStore();
-        engine = new Engine(dataStore, reports);
-    }
+public class ConceptTest extends TestBase {
 
     @Test
     public void buildAClass() {

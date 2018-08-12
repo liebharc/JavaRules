@@ -3,6 +3,16 @@ package com.github.liebharc.JavaRules;
 import com.github.liebharc.JavaRules.rules.InterferenceStep;
 
 public class Logger {
+    private static boolean quiteMode = false;
+
+    public static boolean isQuiteMode() {
+        return quiteMode;
+    }
+
+    public static void setQuiteMode(boolean quiteMode) {
+        Logger.quiteMode = quiteMode;
+    }
+
     private Class<?> caller;
 
     public Logger(Class<?> caller) {
@@ -17,6 +27,6 @@ public class Logger {
 
 
     public void log( String message) {
-        System.out.println(caller.getSimpleName() + ": " + message);
+        if (!quiteMode) { System.out.println(caller.getSimpleName() + ": " + message); }
     }
 }
