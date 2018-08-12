@@ -41,8 +41,8 @@ public class DroolsEngine implements Engine {
             }
 
             kieBase = kbuilder.newKieBase();
-            //kieSession = kieBase.newKieSession();
-            //kieSession.dispose();
+            kieSession = kieBase.newKieSession();
+            kieSession.dispose();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -50,8 +50,8 @@ public class DroolsEngine implements Engine {
 
     @Override
     public void process(Verb verb) {
-        //((StatefulKnowledgeSessionImpl)kieSession).reset();
-        kieSession = kieBase.newKieSession();
+        ((StatefulKnowledgeSessionImpl)kieSession).reset();
+        //kieSession = kieBase.newKieSession();
         try {
             kieSession.setGlobal("logger", logger);
             kieSession.insert(verb);

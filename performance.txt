@@ -1,0 +1,19 @@
+=== Drools with recreating sessions ===
+Memory total: 1 GB
+Time total: 28258 ms
+Memory per iteration: 512 Bytes/Iteration
+Time total per 1000 iterations: 13 ms/1000Iterations
+
+=== Drools with reusing sessions ===
+Memory total: 727 MB
+Time total: 19976 ms
+Memory per iteration: 363 Bytes/Iteration
+Time total per 1000 iterations: 9 ms/1000Iterations
+
+=== Plain Java ===
+Memory total: 247 MB
+Time total: 3934 ms
+Memory per iteration: 123 Bytes/Iteration
+Time total per 1000 iterations: 1 ms/1000Iterations
+
+-> Plain java perform here 5 times faster with a third of the memory. We have 14 rules , with more rules Drools would very likely outperform Java.

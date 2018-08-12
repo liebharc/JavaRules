@@ -36,7 +36,7 @@ public abstract class TestBase {
     }
 
     protected Engine createEngine(ReportStore reports) {
-        return new DroolsEngine(dataStore, reports);
+        return new JavaRulesEngine(dataStore, reports);
     }
 
 }
