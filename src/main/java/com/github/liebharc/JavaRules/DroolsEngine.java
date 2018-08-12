@@ -21,7 +21,10 @@ public class DroolsEngine implements Engine {
     private final DataStore store;
     private final ReportStore reports;
 
+    private KieBase kieBase;
     private KieSession kieSession;
+
+    private Logger logger = new Logger(DroolsEngine.class);
 
     public DroolsEngine(DataStore store, ReportStore reports) {
 
@@ -37,9 +40,9 @@ public class DroolsEngine implements Engine {
                 throw new IllegalStateException("Can not initialize Drools: " + kbuilder.getErrors().toString());
             }
 
-            KieBase kieBase = kbuilder.newKieBase();
-            kieSession = kieBase.newKieSession();
-            kieSession.dispose();
+            kieBase = kbuilder.newKieBase();
+            //kieSession = kieBase.newKieSession();
+            //kieSession.dispose();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -47,8 +50,10 @@ public class DroolsEngine implements Engine {
 
     @Override
     public void process(Verb verb) {
-        ((StatefulKnowledgeSessionImpl)kieSession).reset();
+        //((StatefulKnowledgeSessionImpl)kieSession).reset();
+        kieSession = kieBase.newKieSession();
         try {
+            kieSession.setGlobal("logger", logger);
             kieSession.insert(verb);
             kieSession.insert(store);
             kieSession.insert(reports);

@@ -1,8 +1,29 @@
 package com.github.liebharc
 
-rule "My First Drools Rule"
-  when
-    $o: Object()
-  then
-    System.out.println("Rule Fired for Object: "+$o.toString());
+import com.github.liebharc.JavaRules.verbs.*
+import com.github.liebharc.JavaRules.Logger
+import com.github.liebharc.JavaRules.sharedknowledge.*
+
+global Logger logger
+
+rule "SignOn"
+     no-loop
+     when
+       $verb: StudentJoinsAClass()
+       $store: DataAccess()
+     then
+       logger.log("Student " + $verb.getStudent() + " signed on to class " + $verb.getClassId());
+       $store.assignStudent( $verb.getClassId(), $verb.getStudent());
+       $store.markStudentAsActive( $verb.getClassId(), $verb.getStudent());
+   end
+
+rule "SignOff"
+ no-loop
+ when
+   $verb: StudentResignsFromClass()
+   $store: DataAccess()
+ then
+   logger.log("Student " + $verb.getStudent() + " signed off to class " + $verb.getClassId());
+   $store.markStudentAsInactive( $verb.getClassId(), $verb.getStudent());
+   $store.unassignStudent( $verb.getClassId(), $verb.getStudent());
 end
