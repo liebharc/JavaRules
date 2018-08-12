@@ -14,7 +14,7 @@ public class PerformanceTest extends TestBase {
     @Test
     public void measure() {
         Logger.setQuiteMode(true);
-        engine = new Engine(dataStore, new NoReport());
+        engine =  createEngine(new NoReport());
 
         long[] allStudents = new long[] { david, matt, peter, jodie };
         long[] allClasses = new long[] {

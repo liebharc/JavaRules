@@ -1,7 +1,9 @@
 package com.github.liebharc.JavaRules;
 
 import com.github.liebharc.JavaRules.model.ModelFactory;
+import com.github.liebharc.JavaRules.model.ReportStore;
 import com.github.liebharc.JavaRules.model.ReportStoreImpl;
+import com.github.liebharc.JavaRules.rules.ReportWriter;
 import com.github.liebharc.JavaRules.sharedknowledge.DataStore;
 import org.junit.Before;
 
@@ -30,7 +32,11 @@ public abstract class TestBase {
         peter = dataStore.store(registration.newStudent("Peter" ,"Capaldi"));;
         jodie = dataStore.store(registration.newStudent("Jodie" ,"Whittaker"));
         reports = new ReportStoreImpl();
-        engine = new Engine(dataStore, reports);
+        engine = createEngine(reports);
+    }
+
+    protected Engine createEngine(ReportStore reports) {
+        return new DroolsEngine(dataStore, reports);
     }
 
 }
