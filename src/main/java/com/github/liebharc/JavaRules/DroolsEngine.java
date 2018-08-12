@@ -56,7 +56,7 @@ public class DroolsEngine implements Engine {
             kieSession.setGlobal("logger", logger);
             kieSession.insert(verb);
             kieSession.insert(store);
-            kieSession.insert(reports);
+            kieSession.setGlobal("reports", reports);
             kieSession.fireAllRules();
         }
         finally {
