@@ -3,15 +3,16 @@ package com.github.liebharc.JavaRules;
 
 import com.github.liebharc.JavaRules.model.ModelFactory;
 import com.github.liebharc.JavaRules.model.ReportStore;
+import com.github.liebharc.JavaRules.sharedknowledge.DataStore;
+import com.github.liebharc.JavaRules.sharedknowledge.DataStoreImpl;
 import com.github.liebharc.JavaRules.verbs.*;
 import org.junit.Assert;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 
 public class ConceptTest {
 
-    private DataStore dataStore;
+    private DataStoreImpl dataStore;
     private ModelFactory registration;
     private long schoolClass;
     private long anotherSchoolClass;
@@ -24,7 +25,7 @@ public class ConceptTest {
 
     @Before
     public void setupAClass() {
-        dataStore = new DataStore();
+        dataStore = new DataStoreImpl();
         registration = new ModelFactory();
         schoolClass = dataStore.store(registration.newClass("5-1", 2));
         anotherSchoolClass = dataStore.store(registration.newClass("5-2", 3));
@@ -210,6 +211,7 @@ public class ConceptTest {
         engine.process(new StudentAttendsAClass(david, schoolClass));
         engine.process(new ASchoolDayHasPassed());
         Assert.assertEquals("David attended class 5-1", reports.getReport(david));
+//        Assert.assertEquals("A day passed", reports.getReport(david));
     }
 
     @Test

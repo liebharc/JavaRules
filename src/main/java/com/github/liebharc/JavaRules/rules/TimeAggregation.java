@@ -1,20 +1,14 @@
 package com.github.liebharc.JavaRules.rules;
 
-import com.github.liebharc.JavaRules.DataStore;
+import com.github.liebharc.JavaRules.sharedknowledge.DataStore;
 import com.github.liebharc.JavaRules.Logger;
 import com.github.liebharc.JavaRules.deduction.AggregatedTimeUpdate;
-import com.github.liebharc.JavaRules.deduction.Fact;
 import com.github.liebharc.JavaRules.deduction.Facts;
 import com.github.liebharc.JavaRules.deduction.StudentAttendedClass;
 import com.github.liebharc.JavaRules.model.SchoolClass;
 import com.github.liebharc.JavaRules.model.Student;
 import com.github.liebharc.JavaRules.verbs.ASchoolDayHasPassed;
 import com.github.liebharc.JavaRules.verbs.Verb;
-import javafx.util.Pair;
-
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
 
 public class TimeAggregation implements InterferenceStep {
     private final Logger logger = new Logger(this);

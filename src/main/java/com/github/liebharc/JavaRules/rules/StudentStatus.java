@@ -1,13 +1,10 @@
 package com.github.liebharc.JavaRules.rules;
 
-import com.github.liebharc.JavaRules.DataStore;
+import com.github.liebharc.JavaRules.sharedknowledge.DataStore;
 import com.github.liebharc.JavaRules.Logger;
-import com.github.liebharc.JavaRules.deduction.Fact;
 import com.github.liebharc.JavaRules.deduction.Facts;
 import com.github.liebharc.JavaRules.model.SchoolClass;
 import com.github.liebharc.JavaRules.verbs.*;
-
-import java.util.Collection;
 
 public class StudentStatus implements InterferenceStep {
     private final Logger logger = new Logger(this);

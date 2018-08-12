@@ -3,6 +3,7 @@ package com.github.liebharc.JavaRules;
 import com.github.liebharc.JavaRules.deduction.Facts;
 import com.github.liebharc.JavaRules.model.ReportStore;
 import com.github.liebharc.JavaRules.rules.*;
+import com.github.liebharc.JavaRules.sharedknowledge.DataStore;
 import com.github.liebharc.JavaRules.verbs.Verb;
 
 public class Engine {
