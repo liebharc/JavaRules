@@ -1,6 +1,6 @@
 package com.github.liebharc.JavaRules.rules;
 
-import com.github.liebharc.JavaRules.sharedknowledge.DataStore;
+import com.github.liebharc.JavaRules.sharedknowledge.DataAccess;
 import com.github.liebharc.JavaRules.Logger;
 import com.github.liebharc.JavaRules.deduction.AggregatedTimeUpdate;
 import com.github.liebharc.JavaRules.deduction.Facts;
@@ -12,11 +12,6 @@ import com.github.liebharc.JavaRules.verbs.Verb;
 
 public class TimeAggregation implements InterferenceStep {
     private final Logger logger = new Logger(this);
-    private DataStore store;
-
-    public TimeAggregation(DataStore status) {
-        this.store = status;
-    }
 
     @Override
     public void process(Verb verb, Facts facts) {
@@ -25,6 +20,7 @@ public class TimeAggregation implements InterferenceStep {
             return;
         }
 
+        DataAccess store = facts.getStore();
         for (StudentAttendedClass studentSchoolClassPair : facts.getFacts(StudentAttendedClass.class)) {
             Student student = studentSchoolClassPair.getStudent();
             SchoolClass schoolClass = studentSchoolClassPair.getSchoolClass();

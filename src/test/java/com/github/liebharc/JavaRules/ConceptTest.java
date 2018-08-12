@@ -4,7 +4,6 @@ package com.github.liebharc.JavaRules;
 import com.github.liebharc.JavaRules.model.ModelFactory;
 import com.github.liebharc.JavaRules.model.ReportStore;
 import com.github.liebharc.JavaRules.sharedknowledge.DataStore;
-import com.github.liebharc.JavaRules.sharedknowledge.DataStoreImpl;
 import com.github.liebharc.JavaRules.verbs.*;
 import org.junit.Assert;
 import org.junit.Before;
@@ -12,7 +11,7 @@ import org.junit.Test;
 
 public class ConceptTest {
 
-    private DataStoreImpl dataStore;
+    private DataStore dataStore;
     private ModelFactory registration;
     private long schoolClass;
     private long anotherSchoolClass;
@@ -25,7 +24,7 @@ public class ConceptTest {
 
     @Before
     public void setupAClass() {
-        dataStore = new DataStoreImpl();
+        dataStore = new DataStore();
         registration = new ModelFactory();
         schoolClass = dataStore.store(registration.newClass("5-1", 2));
         anotherSchoolClass = dataStore.store(registration.newClass("5-2", 3));
