@@ -10,6 +10,12 @@ Time total: 19976 ms
 Memory per iteration: 363 Bytes/Iteration
 Time total per 1000 iterations: 9 ms/1000Iterations
 
+=== Drools with reusing sessions after introduction of tokens ===
+Memory total: 1 GB
+Time total: 29726 ms
+Memory per iteration: 877 Bytes/Iteration
+Time total per 1000 iterations: 14 ms/1000Iterations
+
 === Plain Java ===
 Memory total: 247 MB
 Time total: 3934 ms
