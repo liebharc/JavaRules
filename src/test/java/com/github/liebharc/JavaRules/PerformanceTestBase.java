@@ -36,10 +36,6 @@ public abstract class PerformanceTestBase extends TestBase {
         }
 
         for (int iteration = 0; iteration < iterations; iteration++) {
-            if (iteration % 5000 == 4999) {
-                System.gc();
-            }
-
             for (int i = 0; i < allClasses.length; i++) {
                 for (int j = 0; j < allStudents.length; j++) {
                     measurement.process(new StudentAttendsAClass(allStudents[j], allClasses[i]));
@@ -60,6 +56,7 @@ public abstract class PerformanceTestBase extends TestBase {
         private long memory = 0;
         private long time = 0;
         private long iterations = 0;
+        private long memorySamples = 0;
 
         public Measurement(Engine engine) {
 
@@ -67,12 +64,23 @@ public abstract class PerformanceTestBase extends TestBase {
         }
 
         public void process(Verb verb) {
+            final long GC_FREQ = 1000;
+            if (iterations % GC_FREQ == GC_FREQ - 1) {
+                System.gc();
+            }
             final long memoryStart = memoryUsed();
             final long timeStart = System.currentTimeMillis();
             engine.process(verb);
             final long timeEnd = System.currentTimeMillis();
             final long memoryEnd = memoryUsed();
-            memory += (memoryEnd - memoryStart);
+            final long memoryDiff = (memoryEnd - memoryStart);
+            if (memoryDiff >= 0) {
+                memory += memoryDiff;
+                memorySamples++;
+            }
+            else {
+                System.out.println("Memeory decrease due to GC");
+            }
             time += (timeEnd - timeStart);
             iterations++;
         }
@@ -95,7 +103,7 @@ public abstract class PerformanceTestBase extends TestBase {
             builder.append("\nMemory total: " + convertBytes(memory));
             builder.append("\nTime total: " + (time) + " ms");
 
-            builder.append("\nMemory per iteration: " + convertBytes(memory / iterations) + "/Iteration");
+            builder.append("\nMemory per iteration: " + convertBytes(memory / memorySamples) + "/Iteration");
             builder.append("\nTime total per 1000 iterations: " + ((time) * 1000 / iterations)+" ms/1000Iterations");
             return builder.toString();
         }

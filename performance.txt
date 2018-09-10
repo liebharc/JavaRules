@@ -1,29 +1,31 @@
 === StatefulDroolsEngine ===
 Iterations: 2100020
-Memory total: 3 GB
-Time total: 42622 ms
-Memory per iteration: 1 KB/Iteration
-Time total per 1000 iterations: 20 ms/1000Iterations
+Memory total: 55 GB
+Time total: 36791 ms
+Memory per iteration: 27 KB/Iteration
+Time total per 1000 iterations: 17 ms/1000Iterations
 
 === StatelessDroolsEngine ===
 Iterations: 2100020
-Memory total: 7 GB
-Time total: 47732 ms
-Memory per iteration: 3 KB/Iteration
-Time total per 1000 iterations: 22 ms/1000Iterations
+Memory total: 62 GB
+Time total: 45521 ms
+Memory per iteration: 31 KB/Iteration
+Time total per 1000 iterations: 21 ms/1000Iterations
 
 === StatefulReusingDroolsEngine ===
 Iterations: 2100020
-Memory total: 3 GB
-Time total: 27312 ms
-Memory per iteration: 1 KB/Iteration
-Time total per 1000 iterations: 13 ms/1000Iterations
+Memory total: 37 GB
+Time total: 24308 ms
+Memory per iteration: 18 KB/Iteration
+Time total per 1000 iterations: 11 ms/1000Iterations
+
 
 === JavaRulesEngine ===
 Iterations: 2100020
-Memory total: 1 GB
-Time total: 3708 ms
-Memory per iteration: 917 Bytes/Iteration
+Memory total: 13 GB
+Time total: 3540 ms
+Memory per iteration: 6 KB/Iteration
 Time total per 1000 iterations: 1 ms/1000Iterations
+
 
 -> Plain java performs here best. We have 14 rules, with more rules Drools would very likely outperform Java.
