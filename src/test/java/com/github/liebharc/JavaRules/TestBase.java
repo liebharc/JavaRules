@@ -36,7 +36,7 @@ public abstract class TestBase {
     }
 
     protected Engine createEngine(ReportStore reports) {
-        return new JavaRulesEngine(dataStore, reports);
+        return new StatelessDroolsEngine(dataStore, reports);
     }
 
 }
