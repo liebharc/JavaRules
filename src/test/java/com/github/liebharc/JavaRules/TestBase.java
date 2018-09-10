@@ -34,8 +34,6 @@ public abstract class TestBase {
         engine = createEngine(reports);
     }
 
-    protected Engine createEngine(ReportStore reports) {
-        return new StatefulReusingDroolsEngine(dataStore, reports);
-    }
+    protected abstract Engine createEngine(ReportStore reports);
 
 }

@@ -9,7 +9,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-public class ConceptTest extends TestBase {
+public abstract class UnitTestBase extends TestBase {
 
     @Test
     public void buildAClass() {

@@ -6,7 +6,7 @@ import com.github.liebharc.JavaRules.verbs.StudentJoinsAClass;
 import com.github.liebharc.JavaRules.verbs.Verb;
 import org.junit.Test;
 
-public class PerformanceTest extends TestBase {
+public abstract class PerformanceTestBase extends TestBase {
     private static long memoryUsed() {
         return Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
     }
