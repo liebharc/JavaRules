@@ -36,6 +36,10 @@ public class PerformanceTest extends TestBase {
         }
 
         for (int iteration = 0; iteration < iterations; iteration++) {
+            if (iteration % 5000 == 4999) {
+                System.gc();
+            }
+
             for (int i = 0; i < allClasses.length; i++) {
                 for (int j = 0; j < allStudents.length; j++) {
                     measurement.process(new StudentAttendsAClass(allStudents[j], allClasses[i]));
@@ -45,6 +49,7 @@ public class PerformanceTest extends TestBase {
             measurement.process(new ASchoolDayHasPassed());
         }
 
+        System.out.println("=== " + engine.getClass().getSimpleName() + " ===");
         System.out.println(measurement);
     }
 
@@ -86,7 +91,8 @@ public class PerformanceTest extends TestBase {
         @Override
         public String toString() {
             final StringBuilder builder = new StringBuilder();
-            builder.append("Memory total: " + convertBytes(memory));
+            builder.append("Iterations: " + iterations);
+            builder.append("\nMemory total: " + convertBytes(memory));
             builder.append("\nTime total: " + (time) + " ms");
 
             builder.append("\nMemory per iteration: " + convertBytes(memory / iterations) + "/Iteration");

@@ -5,6 +5,7 @@ import com.github.liebharc.JavaRules.model.*
 import com.github.liebharc.JavaRules.deduction.*
 import com.github.liebharc.JavaRules.Logger
 import com.github.liebharc.JavaRules.sharedknowledge.*
+import com.github.liebharc.JavaRules.Token
 import java.util.*
 
 global Logger logger
@@ -14,9 +15,13 @@ rule "Init"
      no-loop
      salience -1
      when
-       $verb: ASchoolDayHasPassed()
+       ASchoolDayHasPassed()
        $store: DataAccess()
+       not Token(
+            type == "Init"
+       )
      then
+       insert(new Token("Init"));
        logger.log("Clearing store");
        for (SchoolClass schoolClass : $store.getActiveClasses()) {
            $store.clearAttendees(schoolClass.getId());
@@ -26,31 +31,51 @@ rule "Init"
 rule "SignOn"
      no-loop
      when
-       $verb: StudentJoinsAClass()
+       StudentJoinsAClass(
+            $student: student,
+            $classId: classId
+       )
        $store: DataAccess()
+       not Token(
+            type == "SignOn",
+            id == $student
+       )
      then
-       logger.log("Student " + $verb.getStudent() + " signed on to class " + $verb.getClassId());
-       $store.assignStudent( $verb.getClassId(), $verb.getStudent());
-       $store.markStudentAsActive( $verb.getClassId(), $verb.getStudent());
+       insert(new Token("SignOn", $student));
+       logger.log("Student " + $student + " signed on to class " + $classId);
+       $store.assignStudent( $classId, $student);
+       $store.markStudentAsActive( $classId, $student);
    end
 
 rule "SignOff"
  no-loop
  when
-   $verb: StudentResignsFromClass()
+   StudentResignsFromClass(
+         $student: student,
+         $classId: classId
+    )
    $store: DataAccess()
+    not Token(
+       type == "SignOn",
+       id == $student
+  )
  then
-   logger.log("Student " + $verb.getStudent() + " signed off to class " + $verb.getClassId());
-   $store.markStudentAsInactive( $verb.getClassId(), $verb.getStudent());
-   $store.unassignStudent( $verb.getClassId(), $verb.getStudent());
+   insert(new Token("SignOff", $student));
+   logger.log("Student " + $student + " signed off to class " + $classId);
+   $store.markStudentAsInactive( $classId, $student);
+   $store.unassignStudent( $classId, $student);
 end
 
 rule "MissedClassesAggregation"
      no-loop
      when
-       $verb: ASchoolDayHasPassed()
+       ASchoolDayHasPassed()
        $store: DataAccess()
+       not Token(
+              type == "MissedClassesAggregation"
+         )
      then
+        insert(new Token("MissedClassesAggregation"));
        for (SchoolClass schoolClass : $store.getActiveClasses()) {
            List<Student> activeStudents = $store.getActiveStudents(schoolClass.getId());
            List<Student> attendees = $store.getAttendees(schoolClass.getId());
@@ -72,12 +97,19 @@ rule "MissedClassesAggregation"
 rule "setInactive"
      no-loop
      when
-       $verb: StudentBecomesSick()
+       StudentBecomesSick(
+        $student: student
+       )
        $store: DataAccess()
+       not Token(
+              type == "setInactive",
+              id == $student
+         )
      then
-       logger.log("Student " + $verb.getStudent() + " became sick");
-       for (SchoolClass schoolClass : $store.getAssignedClasses($verb.getStudent())) {
-           $store.markStudentAsInactive(schoolClass.getId(), $verb.getStudent());
+        insert(new Token("setInactive", $student));
+       logger.log("Student " + $student + " became sick");
+       for (SchoolClass schoolClass : $store.getAssignedClasses($student)) {
+           $store.markStudentAsInactive(schoolClass.getId(), $student);
        }
    end
 
@@ -85,107 +117,125 @@ rule "setInactive"
 rule "setActive"
      no-loop
      when
-       $verb: StudentReturnsFromSickness()
+       StudentReturnsFromSickness(
+        $student: student
+       )
        $store: DataAccess()
+       not Token(
+              type == "setActive",
+              id == $student
+         )
      then
-       logger.log("Student " + $verb.getStudent() + " returned to classes");
-       for (SchoolClass schoolClass : $store.getAssignedClasses($verb.getStudent())) {
-           $store.markStudentAsActive(schoolClass.getId(), $verb.getStudent());
+        insert(new Token("setActive", $student));
+       logger.log("Student " + $student + " returned to classes");
+       for (SchoolClass schoolClass : $store.getAssignedClasses($student)) {
+           $store.markStudentAsActive(schoolClass.getId(), $student);
        }
    end
 
 rule "markAsAttended"
     no-loop
     when
-      $verb: StudentAttendsAClass()
-      $store: DataAccess()
+        StudentAttendsAClass(
+         $student: student
+        )
+        $store: DataAccess()
+        not Token(
+               type == "markAsAttended",
+               id == $student
+          )
     then
-      logger.log("Student " + $verb.getStudent() + " has attended class");
-      for (SchoolClass schoolClass : $store.getAssignedClasses($verb.getStudent())) {
-          $store.markAsAttended(schoolClass.getId(), $verb.getStudent());
+        insert(new Token("markAsAttended", $student));
+      logger.log("Student " + $student + " has attended class");
+      for (SchoolClass schoolClass : $store.getAssignedClasses($student)) {
+          $store.markAsAttended(schoolClass.getId(), $student);
       }
   end
 
 rule "TimeAggregation"
     no-loop
     when
-      $verb: ASchoolDayHasPassed()
+      ASchoolDayHasPassed()
       $store: DataAccess()
-      $studentSchoolClassPair: StudentAttendedClass()
+      $studentSchoolClassPair: StudentAttendedClass(
+            $student: student,
+            $schoolClass: schoolClass)
     then
-
-     Student student = $studentSchoolClassPair.getStudent();
-     SchoolClass schoolClass = $studentSchoolClassPair.getSchoolClass();
-     logger.log(student + " attended class "  + schoolClass + " and got accounted "+ schoolClass.getHoursADay());
-     $store.addStudyTime(student.getId(), schoolClass.getHoursADay());
-     insert(new AggregatedTimeUpdate(student, $store.getStudyTime(student.getId())));
+     logger.log($student + " attended class "  + $schoolClass + " and got accounted "+ $schoolClass.getHoursADay());
+     $store.addStudyTime($student.getId(), $schoolClass.getHoursADay());
+     insert(new AggregatedTimeUpdate($student, $store.getStudyTime($student.getId())));
   end
 
 rule "SuccessfulCompletion"
     no-loop
     when
-        $update: AggregatedTimeUpdate()
+        AggregatedTimeUpdate(
+            $student: student,
+            $time: attendedTime)
+
         $store: DataAccess()
     then
-    if ($update.getAttendedTime() > 10) {
-        Student student = $update.getStudent();
-        logger.log("Student " + $update.getStudent() + " completed his studies");
-        for (SchoolClass schoolClass : $store.getAssignedClasses(student.getId())) {
-            $store.markStudentAsInactive(schoolClass.getId(), student.getId());
-            $store.unassignStudent(schoolClass.getId(), student.getId());
+    if ($time > 10) {
+        logger.log("Student " + $student + " completed his studies");
+        for (SchoolClass schoolClass : $store.getAssignedClasses($student.getId())) {
+            $store.markStudentAsInactive(schoolClass.getId(), $student.getId());
+            $store.unassignStudent(schoolClass.getId(), $student.getId());
         }
-        insert(new StudentLeaves($update.getStudent(), true));
+        insert(new StudentLeaves($student, true));
     }
 end
 
 rule "FailureToComplete"
     no-loop
     when
-        $miss: StudentMissedClass()
+        StudentMissedClass(
+            $student: student,
+            $misses: misses)
         $store: DataAccess()
     then
-    if ($miss.getMisses() >= 5) {
-        Student student = $miss.getStudent();
-        logger.log("Student " + $miss.getStudent() + " missed too many classes");
-        for (SchoolClass schoolClass : $store.getAssignedClasses(student.getId())) {
-            $store.markStudentAsInactive(schoolClass.getId(), student.getId());
-            $store.unassignStudent(schoolClass.getId(), student.getId());
+    if ($misses >= 5) {
+        logger.log("Student " + $student + " missed too many classes");
+        for (SchoolClass schoolClass : $store.getAssignedClasses($student.getId())) {
+            $store.markStudentAsInactive(schoolClass.getId(), $student.getId());
+            $store.unassignStudent(schoolClass.getId(), $student.getId());
         }
-        insert(new StudentLeaves($miss.getStudent(), false));
+        insert(new StudentLeaves($student, false));
     }
 end
 
 rule "ReportAttendance"
     no-loop
     when
-        $studentAttendedClass: StudentAttendedClass()
+       StudentAttendedClass(
+            $student: student,
+            $schoolClass: schoolClass
+        )
     then
-    Student student = $studentAttendedClass.getStudent();
-    SchoolClass schoolClass = $studentAttendedClass.getSchoolClass();
-    reports.writeReport(student.getId(), student.getFirstName() + " attended class " + schoolClass.getName());
+    reports.writeReport($student.getId(), $student.getFirstName() + " attended class " + $schoolClass.getName());
 end
 
 rule "ReportMiss"
     no-loop
     when
-        $studentMissedClass: StudentMissedClass()
+        StudentMissedClass(
+            $student: student,
+            $schoolClass: schoolClass)
     then
-    Student student = $studentMissedClass.getStudent();
-    SchoolClass schoolClass = $studentMissedClass.getSchoolClass();
-    reports.writeReport(student.getId(), student.getFirstName() + " missed class " + schoolClass.getName());
+    reports.writeReport($student.getId(), $student.getFirstName() + " missed class " + $schoolClass.getName());
 end
 
 rule "ReportLeave"
     no-loop
     when
-        $leave: StudentLeaves()
+        $leave: StudentLeaves(
+            $student: student
+        )
     then
-    Student student = $leave.getStudent();
     if ( $leave.isSuccessfulCompletion()) {
-        reports.writeReport(student.getId(), student.getFirstName() + " completed his classes :)");
+        reports.writeReport($student.getId(), $student.getFirstName() + " completed his classes :)");
     }
     else {
-        reports.writeReport(student.getId(), student.getFirstName() + " got expelled :(");
+        reports.writeReport($student.getId(), $student.getFirstName() + " got expelled :(");
     }
 end
 

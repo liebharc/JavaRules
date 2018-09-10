@@ -14,16 +14,17 @@ import org.kie.internal.io.ResourceFactory;
 import java.io.IOException;
 import java.net.URL;
 
-public class StatefulDroolsEngine implements Engine {
+public class StatefulReusingDroolsEngine implements Engine {
 
     private final DataStore store;
     private final ReportStore reports;
 
     private KieBase kieBase;
+    private KieSession kieSession;
 
-    private Logger logger = new Logger(StatefulDroolsEngine.class);
+    private Logger logger = new Logger(StatefulReusingDroolsEngine.class);
 
-    public StatefulDroolsEngine(DataStore store, ReportStore reports) {
+    public StatefulReusingDroolsEngine(DataStore store, ReportStore reports) {
 
         this.store = store;
         this.reports = reports;
@@ -42,6 +43,8 @@ public class StatefulDroolsEngine implements Engine {
             }
 
             kieBase = kbuilder.newKieBase();
+            kieSession = kieBase.newKieSession();
+            kieSession.dispose();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -49,7 +52,8 @@ public class StatefulDroolsEngine implements Engine {
 
     @Override
     public void process(Verb verb) {
-        KieSession kieSession = kieBase.newKieSession();
+        ((StatefulKnowledgeSessionImpl)kieSession).reset();
+        //((StatefulKnowledgeSessionImpl) kieSession).getNodeMemories().clear();
         try {
             kieSession.setGlobal("logger", logger);
             kieSession.insert(verb);
