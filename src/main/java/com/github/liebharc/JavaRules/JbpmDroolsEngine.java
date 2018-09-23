@@ -19,7 +19,7 @@ public class JbpmDroolsEngine implements Engine {
     private final DataStore store;
     private final ReportStore reports;
 
-    private KieSession kieSession;
+    //private KieSession kieSession;
 
     private Logger logger = new Logger(StatefulReusingDroolsEngine.class);
 
@@ -27,7 +27,7 @@ public class JbpmDroolsEngine implements Engine {
         this.store = store;
         this.reports = reports;
 
-        try {
+        /*try {
             KnowledgeBuilder kbuilder = KnowledgeBuilderFactory.newKnowledgeBuilder();
             ClassLoader classloader = Thread
                     .currentThread()
@@ -45,12 +45,12 @@ public class JbpmDroolsEngine implements Engine {
             kieSession.dispose();
         } catch (IOException e) {
             throw new RuntimeException(e);
-        }
+        }*/
     }
 
     @Override
     public void process(Verb verb) {
-        ((StatefulKnowledgeSessionImpl)kieSession).reset();
+        /*((StatefulKnowledgeSessionImpl)kieSession).reset();
         try {
             kieSession.setGlobal("logger", logger);
             kieSession.insert(verb);
@@ -59,6 +59,7 @@ public class JbpmDroolsEngine implements Engine {
             kieSession.startProcess("com.github.liebharc.JavaRules.ScriptTaskTest");
         } finally {
             kieSession.dispose();
-        }
+        }*/
+        Rules.INSTANCE.process(verb, store, logger, reports);
     }
 }
