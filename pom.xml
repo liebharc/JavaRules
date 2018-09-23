@@ -45,6 +45,12 @@
             <artifactId>drools-core</artifactId>
             <version>7.9.0.Final</version>
         </dependency>
+        <dependency>
+            <groupId>org.jbpm</groupId>
+            <artifactId>jbpm-test</artifactId>
+            <version>7.9.0.Final</version>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
 </project>

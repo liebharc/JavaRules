@@ -1,0 +1,11 @@
+package com.github.liebharc
+
+import com.github.liebharc.JavaRules.verbs.*
+import com.github.liebharc.JavaRules.model.*
+import com.github.liebharc.JavaRules.deduction.*
+import com.github.liebharc.JavaRules.Logger
+import com.github.liebharc.JavaRules.sharedknowledge.*
+import com.github.liebharc.JavaRules.Token
+
+global Logger logger
+global ReportStore reports
