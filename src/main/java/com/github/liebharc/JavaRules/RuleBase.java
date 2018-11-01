@@ -65,7 +65,7 @@ public abstract class RuleBase {
 
         @Override
         public boolean notExistsToken(Predicate<Token> predicate) {
-            return tokens
+            return !tokens
                     .stream()
                     .anyMatch(o -> o instanceof Token && predicate.test(o));
         }
@@ -134,7 +134,7 @@ public abstract class RuleBase {
 
         @Override
         public boolean notExistsToken(Predicate<Token> predicate) {
-            return tokens
+            return !tokens
                     .stream()
                     .anyMatch(o -> o instanceof Token && predicate.test(o));
         }
