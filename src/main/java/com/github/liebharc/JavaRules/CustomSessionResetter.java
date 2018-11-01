@@ -65,13 +65,13 @@ public class CustomSessionResetter {
             }
 
             InternalAgenda agenda = this.getValue(session, agendaField);
-            //agenda.reset();
+            agenda.reset();
 
             GlobalResolver globalResolver = this.getValue(session, globalResolverField);
             //globalResolver.clear();
 
             List<KieBaseEventListener> kieBaseEventListeners = this.getValue(session, kieBaseEventListenersField);
-           // kieBaseEventListeners.clear();
+            //kieBaseEventListeners.clear();
 
             FactHandleFactory handleFactory = this.getValue(session, handleFactoryField);
             //handleFactory.clear( 0, 0 );
@@ -91,9 +91,9 @@ public class CustomSessionResetter {
             //session.updateEntryPointsCache();
 
             TimerService timerService = this.getValue(session, timerServiceField);
-           // timerService.reset();
+            //timerService.reset();
 
-           // processRuntimeField.set(session, null);
+            processRuntimeField.set(session, null);
 
             //initialFactHandleField.set(session, session.initInitialFact(kieBase, null));
 
