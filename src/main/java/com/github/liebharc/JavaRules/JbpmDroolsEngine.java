@@ -60,5 +60,7 @@ public class JbpmDroolsEngine implements Engine {
         } finally {
             kieSession.dispose();
         }
+
+        Rules.INSTANCE.process(verb, store, logger, reports);
     }
 }

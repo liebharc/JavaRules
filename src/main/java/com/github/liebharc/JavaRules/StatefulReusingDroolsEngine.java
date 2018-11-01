@@ -44,7 +44,6 @@ public class StatefulReusingDroolsEngine implements Engine {
 
             kieBase = kbuilder.newKieBase();
             kieSession = kieBase.newKieSession();
-            kieSession.dispose();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -53,15 +52,10 @@ public class StatefulReusingDroolsEngine implements Engine {
     @Override
     public void process(Verb verb) {
         ((StatefulKnowledgeSessionImpl)kieSession).reset();
-        //((StatefulKnowledgeSessionImpl) kieSession).getNodeMemories().clear();
-        try {
-            kieSession.setGlobal("logger", logger);
-            kieSession.insert(verb);
-            kieSession.insert(store);
-            kieSession.setGlobal("reports", reports);
-            kieSession.fireAllRules();
-        } finally {
-            kieSession.dispose();
-        }
+        kieSession.setGlobal("logger", logger);
+        kieSession.insert(verb);
+        kieSession.insert(store);
+        kieSession.setGlobal("reports", reports);
+        kieSession.fireAllRules();
     }
 }

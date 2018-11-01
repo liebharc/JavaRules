@@ -3,10 +3,12 @@ package com.github.liebharc.JavaRules;
 import com.github.liebharc.JavaRules.model.ReportStore;
 import com.github.liebharc.JavaRules.sharedknowledge.DataStore;
 import com.github.liebharc.JavaRules.verbs.Verb;
+import org.drools.core.impl.KnowledgeBaseImpl;
 import org.drools.core.impl.StatefulKnowledgeSessionImpl;
 import org.kie.api.KieBase;
 import org.kie.api.io.ResourceType;
 import org.kie.api.runtime.KieSession;
+import org.kie.api.runtime.KieSessionsPool;
 import org.kie.internal.builder.KnowledgeBuilder;
 import org.kie.internal.builder.KnowledgeBuilderFactory;
 import org.kie.internal.io.ResourceFactory;
@@ -18,8 +20,9 @@ public class StatefulDroolsEngine implements Engine {
 
     private final DataStore store;
     private final ReportStore reports;
+    private final KieSessionsPool kieSessionsPool;
 
-    private KieBase kieBase;
+    private KnowledgeBaseImpl kieBase;
 
     private Logger logger = new Logger(StatefulDroolsEngine.class);
 
@@ -41,7 +44,8 @@ public class StatefulDroolsEngine implements Engine {
                     .toString());
             }
 
-            kieBase = kbuilder.newKieBase();
+            kieBase = (KnowledgeBaseImpl)kbuilder.newKieBase();
+            kieSessionsPool = kieBase.newKieSessionsPool(1);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -49,7 +53,7 @@ public class StatefulDroolsEngine implements Engine {
 
     @Override
     public void process(Verb verb) {
-        KieSession kieSession = kieBase.newKieSession();
+        KieSession kieSession = kieSessionsPool.newKieSession();
         try {
             kieSession.setGlobal("logger", logger);
             kieSession.insert(verb);

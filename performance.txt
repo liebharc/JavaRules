@@ -1,23 +1,23 @@
 === StatefulDroolsEngine ===
 Iterations: 2100020
-Memory total: 55 GB
-Time total: 36791 ms
-Memory per iteration: 27 KB/Iteration
-Time total per 1000 iterations: 17 ms/1000Iterations
+Memory total: 17 GB
+Time total: 13136 ms
+Memory per iteration: 8 KB/Iteration
+Time total per 1000 iterations: 6 ms/1000Iterations
 
 === StatelessDroolsEngine ===
 Iterations: 2100020
-Memory total: 62 GB
-Time total: 45521 ms
-Memory per iteration: 31 KB/Iteration
-Time total per 1000 iterations: 21 ms/1000Iterations
+Memory total: 22 GB
+Time total: 18097 ms
+Memory per iteration: 11 KB/Iteration
+Time total per 1000 iterations: 8 ms/1000Iterations
 
 === StatefulReusingDroolsEngine ===
 Iterations: 2100020
-Memory total: 37 GB
-Time total: 24308 ms
-Memory per iteration: 18 KB/Iteration
-Time total per 1000 iterations: 11 ms/1000Iterations
+Memory total: 17 GB
+Time total: 13044 ms
+Memory per iteration: 8 KB/Iteration
+Time total per 1000 iterations: 6 ms/1000Iterations
 
 === JavaRulesEngine ===
 Iterations: 2100020
