@@ -26,5 +26,20 @@ Time total: 3540 ms
 Memory per iteration: 6 KB/Iteration
 Time total per 1000 iterations: 1 ms/1000Iterations
 
+=== JbpmDroolsEngine ===
+Iterations: 2100020
+Memory total: 42 GB
+Time total: 24916 ms
+Memory per iteration: 21 KB/Iteration
+Time total per 1000 iterations: 11 ms/1000Iterations
+(Note values match closely with StatefulReusingDroolsEngine, even if this implementation is in Java and only the
+executed within a JPBM session)
+
+=== com.github.liebharc.JavaRules which is used by JpbmDroolsEngine ===
+Iterations: 2100020
+Memory total: 18 GB
+Time total: 4597 ms
+Memory per iteration: 9 KB/Iteration
+Time total per 1000 iterations: 2 ms/1000Iterations
 
 -> Plain java performs best in this benchmark. We have 14 rules, with more rules Drools would very likely outperform Java.
