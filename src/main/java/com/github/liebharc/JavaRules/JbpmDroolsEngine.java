@@ -7,6 +7,7 @@ import org.drools.core.impl.StatefulKnowledgeSessionImpl;
 import org.kie.api.KieBase;
 import org.kie.api.io.ResourceType;
 import org.kie.api.runtime.KieSession;
+import org.kie.api.runtime.rule.FactHandle;
 import org.kie.internal.builder.KnowledgeBuilder;
 import org.kie.internal.builder.KnowledgeBuilderFactory;
 import org.kie.internal.io.ResourceFactory;
@@ -60,7 +61,5 @@ public class JbpmDroolsEngine implements Engine {
         } finally {
             kieSession.dispose();
         }
-
-        Rules.INSTANCE.process(verb, store, logger, reports);
     }
 }

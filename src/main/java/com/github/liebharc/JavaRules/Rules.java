@@ -14,38 +14,33 @@ public class Rules extends RuleBase {
 
     @Override
     protected void process(Session session) {
-        ruleGroup1(session);
-        ruleGroup2(session);
-    }
-
-    /**
-     /* This rule group inserts the tokens: Init, SignOn, MissedClassesAggregation, setInactive, setActive, markAsAttended
-     /*
-     /* @param session Access to the JBPM session
-     */
-    protected void ruleGroup1(Session session) {
+        // SignUpSignOff
         ruleSignOn(session);
-        ruleMissedClassesAggregation(session);
+        ruleSignOff(session);
+
+        // StudentStatus
         ruleSetInactive(session);
         ruleSetActive(session);
         ruleMarkAsAttended(session);
+
+        // MissedClassesAggregation
+        ruleMissedClassesAggregation(session);
+
+        // TimeAggregation
         ruleTimeAggregation(session);
+
+        // ClassCompletion
         ruleSuccessfulCompletion(session);
         ruleFailureToComplete(session);
+
+        // InitRule
+        ruleInit(session);
+
+        // ReportWriter
         ruleReportAttendance(session);
         ruleReportMiss(session);
         ruleReportLeave(session);
         ruleReportTime(session);
-        ruleInit(session);
-    }
-
-    /**
-     /* This rule group inserts the tokens: SignOff
-     /*
-     /* @param session Access to the JBPM session
-     */
-    protected void ruleGroup2(Session session) {
-        ruleSignOff(session);
     }
 
     private void ruleSignOn(Session session) {
@@ -229,15 +224,12 @@ public class Rules extends RuleBase {
         final Logger logger = session.getLogger();
         final DataAccess store = session.getDataAccess();
         for (StudentResignsFromClass studentResignsFromClass : session.findAll(StudentResignsFromClass.class)) {
-            if (session.notExistsToken(token -> token.getType().equals("SignOn")
-                    && token.getId() == studentResignsFromClass.getStudent())) {
-                long student = studentResignsFromClass.getStudent();
-                long classId = studentResignsFromClass.getClassId();
-                session.insertDebugToken("SignOff", student);
-                logger.log("Student " + student + " signed off to class " + classId);
-                store.markStudentAsInactive( classId, student);
-                store.unassignStudent( classId, student);
-            }
+            long student = studentResignsFromClass.getStudent();
+            long classId = studentResignsFromClass.getClassId();
+            session.insertDebugToken("SignOff", student);
+            logger.log("Student " + student + " signed off to class " + classId);
+            store.markStudentAsInactive( classId, student);
+            store.unassignStudent( classId, student);
         }
     }
 
