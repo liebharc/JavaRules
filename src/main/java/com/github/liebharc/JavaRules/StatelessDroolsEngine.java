@@ -52,7 +52,7 @@ public class StatelessDroolsEngine implements Engine {
             }
 
             kieBase = (KnowledgeBaseImpl)kbuilder.newKieBase();
-            kieSessionsPool = kieBase.newKieSessionsPool(5);
+            kieSessionsPool = kieBase.newKieSessionsPool(1);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
