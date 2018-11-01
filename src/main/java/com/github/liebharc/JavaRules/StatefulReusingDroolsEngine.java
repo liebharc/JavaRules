@@ -3,6 +3,7 @@ package com.github.liebharc.JavaRules;
 import com.github.liebharc.JavaRules.model.ReportStore;
 import com.github.liebharc.JavaRules.sharedknowledge.DataStore;
 import com.github.liebharc.JavaRules.verbs.Verb;
+import org.drools.core.impl.InternalKnowledgeBase;
 import org.drools.core.impl.StatefulKnowledgeSessionImpl;
 import org.kie.api.KieBase;
 import org.kie.api.io.ResourceType;
@@ -18,6 +19,7 @@ public class StatefulReusingDroolsEngine implements Engine {
 
     private final DataStore store;
     private final ReportStore reports;
+    private final CustomSessionResetter resetter;
 
     private KieBase kieBase;
     private KieSession kieSession;
@@ -44,6 +46,7 @@ public class StatefulReusingDroolsEngine implements Engine {
 
             kieBase = kbuilder.newKieBase();
             kieSession = kieBase.newKieSession();
+            resetter = new CustomSessionResetter((InternalKnowledgeBase)kieBase);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -51,7 +54,8 @@ public class StatefulReusingDroolsEngine implements Engine {
 
     @Override
     public void process(Verb verb) {
-        ((StatefulKnowledgeSessionImpl)kieSession).reset();
+        //((StatefulKnowledgeSessionImpl)kieSession).reset();
+        resetter.reset((StatefulKnowledgeSessionImpl) kieSession);
         kieSession.setGlobal("logger", logger);
         kieSession.insert(verb);
         kieSession.insert(store);
