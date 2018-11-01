@@ -66,7 +66,7 @@ public class JbpmDroolsEngine implements Engine {
 
     @Override
     public void process(Verb verb) {
-        resetter.reset((StatefulKnowledgeSessionImpl) kieSession);
+        ((StatefulKnowledgeSessionImpl) kieSession).reset();
         try {
             kieSession.setGlobal("logger", logger);
             kieSession.insert(verb);

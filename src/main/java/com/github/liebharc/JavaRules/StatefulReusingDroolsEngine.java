@@ -54,8 +54,7 @@ public class StatefulReusingDroolsEngine implements Engine {
 
     @Override
     public void process(Verb verb) {
-        //((StatefulKnowledgeSessionImpl)kieSession).reset();
-        resetter.reset((StatefulKnowledgeSessionImpl) kieSession);
+        ((StatefulKnowledgeSessionImpl)kieSession).reset();
         kieSession.setGlobal("logger", logger);
         kieSession.insert(verb);
         kieSession.insert(store);
