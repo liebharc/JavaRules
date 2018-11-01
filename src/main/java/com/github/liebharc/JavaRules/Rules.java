@@ -224,12 +224,15 @@ public class Rules extends RuleBase {
         final Logger logger = session.getLogger();
         final DataAccess store = session.getDataAccess();
         for (StudentResignsFromClass studentResignsFromClass : session.findAll(StudentResignsFromClass.class)) {
-            long student = studentResignsFromClass.getStudent();
-            long classId = studentResignsFromClass.getClassId();
-            session.insertDebugToken("SignOff", student);
-            logger.log("Student " + student + " signed off to class " + classId);
-            store.markStudentAsInactive( classId, student);
-            store.unassignStudent( classId, student);
+            if (session.notExistsToken(token -> token.getType().equals("SignOn")
+                    && token.getId() == studentResignsFromClass.getStudent())) {
+                long student = studentResignsFromClass.getStudent();
+                long classId = studentResignsFromClass.getClassId();
+                session.insertDebugToken("SignOff", student);
+                logger.log("Student " + student + " signed off to class " + classId);
+                store.markStudentAsInactive( classId, student);
+                store.unassignStudent( classId, student);
+            }
         }
     }
 
