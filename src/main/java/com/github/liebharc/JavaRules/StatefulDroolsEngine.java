@@ -3,6 +3,7 @@ package com.github.liebharc.JavaRules;
 import com.github.liebharc.JavaRules.model.ReportStore;
 import com.github.liebharc.JavaRules.sharedknowledge.DataStore;
 import com.github.liebharc.JavaRules.verbs.Verb;
+import org.drools.compiler.builder.impl.KnowledgeBuilderImpl;
 import org.drools.core.impl.KnowledgeBaseImpl;
 import org.drools.core.impl.StatefulKnowledgeSessionImpl;
 import org.kie.api.KieBase;
@@ -32,7 +33,7 @@ public class StatefulDroolsEngine implements Engine {
         this.reports = reports;
 
         try {
-            KnowledgeBuilder kbuilder = KnowledgeBuilderFactory.newKnowledgeBuilder();
+            KnowledgeBuilderImpl kbuilder = (KnowledgeBuilderImpl)KnowledgeBuilderFactory.newKnowledgeBuilder();
             ClassLoader classloader = Thread
                 .currentThread()
                 .getContextClassLoader();
@@ -44,7 +45,7 @@ public class StatefulDroolsEngine implements Engine {
                     .toString());
             }
 
-            kieBase = (KnowledgeBaseImpl)kbuilder.newKieBase();
+            kieBase = (KnowledgeBaseImpl)kbuilder.newKnowledgeBase(RuleBaseConfigurationProvider.createRuleBaseConfiguration(true));
             kieSessionsPool = kieBase.newKieSessionsPool(1);
         } catch (IOException e) {
             throw new RuntimeException(e);

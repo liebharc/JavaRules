@@ -3,6 +3,7 @@ package com.github.liebharc.JavaRules;
 import com.github.liebharc.JavaRules.model.ReportStore;
 import com.github.liebharc.JavaRules.sharedknowledge.DataStore;
 import com.github.liebharc.JavaRules.verbs.Verb;
+import org.drools.compiler.builder.impl.KnowledgeBuilderImpl;
 import org.drools.core.common.InternalAgenda;
 import org.drools.core.common.InternalWorkingMemoryEntryPoint;
 import org.drools.core.common.NodeMemories;
@@ -43,7 +44,7 @@ public class JbpmDroolsEngine implements Engine {
         this.reports = reports;
 
         try {
-            KnowledgeBuilder kbuilder = KnowledgeBuilderFactory.newKnowledgeBuilder();
+            KnowledgeBuilderImpl kbuilder = (KnowledgeBuilderImpl)KnowledgeBuilderFactory.newKnowledgeBuilder();
             ClassLoader classloader = Thread
                     .currentThread()
                     .getContextClassLoader();
@@ -55,7 +56,7 @@ public class JbpmDroolsEngine implements Engine {
                         .toString());
             }
 
-            final KieBase kieBase = kbuilder.newKieBase();
+            final KieBase kieBase = kbuilder.newKnowledgeBase(RuleBaseConfigurationProvider.createRuleBaseConfiguration(true));
             kieSession = kieBase.newKieSession();
             kieSession.dispose();
             resetter = new CustomSessionResetter((InternalKnowledgeBase)kieBase);

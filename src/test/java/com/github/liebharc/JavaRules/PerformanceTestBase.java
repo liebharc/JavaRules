@@ -69,9 +69,9 @@ public abstract class PerformanceTestBase extends TestBase {
                 System.gc();
             }
             final long memoryStart = memoryUsed();
-            final long timeStart = System.currentTimeMillis();
+            final long timeStart = System.nanoTime();
             engine.process(verb);
-            final long timeEnd = System.currentTimeMillis();
+            final long timeEnd = System.nanoTime();
             final long memoryEnd = memoryUsed();
             final long memoryDiff = (memoryEnd - memoryStart);
             if (memoryDiff >= 0) {
@@ -101,10 +101,10 @@ public abstract class PerformanceTestBase extends TestBase {
             final StringBuilder builder = new StringBuilder();
             builder.append("Iterations: " + iterations);
             builder.append("\nMemory total: " + convertBytes(memory));
-            builder.append("\nTime total: " + (time) + " ms");
+            builder.append("\nTime total: " + (time / 1000000) + " ms");
 
             builder.append("\nMemory per iteration: " + convertBytes(memory / memorySamples) + "/Iteration");
-            builder.append("\nTime total per 1000 iterations: " + ((time) * 1000 / iterations)+" ms/1000Iterations");
+            builder.append("\nTime total per 1000 iterations: " + (time / 1000 / iterations)+" ms/1000Iterations");
             return builder.toString();
         }
     }

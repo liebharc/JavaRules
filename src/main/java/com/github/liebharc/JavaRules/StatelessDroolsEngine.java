@@ -3,6 +3,8 @@ package com.github.liebharc.JavaRules;
 import com.github.liebharc.JavaRules.model.ReportStore;
 import com.github.liebharc.JavaRules.sharedknowledge.DataStore;
 import com.github.liebharc.JavaRules.verbs.Verb;
+import org.drools.compiler.builder.impl.KnowledgeBuilderImpl;
+import org.drools.core.RuleBaseConfiguration;
 import org.drools.core.SessionConfiguration;
 import org.drools.core.command.runtime.rule.FireAllRulesCommand;
 import org.drools.core.command.runtime.rule.InsertObjectCommand;
@@ -43,7 +45,7 @@ public class StatelessDroolsEngine implements Engine {
         this.reports = reports;
 
         try {
-            KnowledgeBuilder kbuilder = KnowledgeBuilderFactory.newKnowledgeBuilder();
+            KnowledgeBuilderImpl kbuilder = (KnowledgeBuilderImpl)KnowledgeBuilderFactory.newKnowledgeBuilder();
             ClassLoader classloader = Thread.currentThread().getContextClassLoader();
             URL resource = classloader.getResource("rules.drl");
             kbuilder.add(ResourceFactory.newInputStreamResource(resource.openStream()), ResourceType.DRL);
@@ -51,7 +53,7 @@ public class StatelessDroolsEngine implements Engine {
                 throw new IllegalStateException("Can not initialize Drools: " + kbuilder.getErrors().toString());
             }
 
-            kieBase = (KnowledgeBaseImpl)kbuilder.newKieBase();
+            kieBase = (KnowledgeBaseImpl)kbuilder.newKnowledgeBase(RuleBaseConfigurationProvider.createRuleBaseConfiguration(false));
             kieSessionsPool = kieBase.newKieSessionsPool(1);
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -60,7 +62,7 @@ public class StatelessDroolsEngine implements Engine {
 
     @Override
     public void process(Verb verb) {
-        StatelessKieSession kieSession = kieSessionsPool.newStatelessKieSession();
+        StatelessKieSession kieSession = kieBase.newStatelessKieSession();
         final List<Command> commands = new ArrayList<>(5);
         commands.add(CommandFactory.newSetGlobal("logger", logger));
         commands.add(CommandFactory.newSetGlobal("reports", reports));

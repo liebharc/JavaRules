@@ -11,23 +11,6 @@ import java.util.*
 global Logger logger
 global ReportStore reports
 
-rule "Init"
-     no-loop
-     salience -1
-     when
-       ASchoolDayHasPassed()
-       $store: DataAccess()
-       not Token(
-            type == "Init"
-       )
-     then
-       insert(new Token("Init"));
-       logger.log("Clearing store");
-       for (SchoolClass schoolClass : $store.getActiveClasses()) {
-           $store.clearAttendees(schoolClass.getId());
-       }
-   end
-
 rule "SignOn"
      no-loop
      when
@@ -65,34 +48,6 @@ rule "SignOff"
    $store.markStudentAsInactive( $classId, $student);
    $store.unassignStudent( $classId, $student);
 end
-
-rule "MissedClassesAggregation"
-     no-loop
-     when
-       ASchoolDayHasPassed()
-       $store: DataAccess()
-       not Token(
-              type == "MissedClassesAggregation"
-         )
-     then
-        insert(new Token("MissedClassesAggregation"));
-       for (SchoolClass schoolClass : $store.getActiveClasses()) {
-           List<Student> activeStudents = $store.getActiveStudents(schoolClass.getId());
-           List<Student> attendees = $store.getAttendees(schoolClass.getId());
-           for (Student attendee : new HashSet<>(attendees)) {
-               logger.log(attendee + " has attended class " + schoolClass);
-               insert(new StudentAttendedClass(attendee, schoolClass));
-           }
-
-           List<Student> misses = new ArrayList<>(activeStudents);
-           misses.removeAll(attendees);
-           for (Student miss : misses) {
-               logger.log(miss + " has missed class " + schoolClass);
-               $store.incrementClassesMissed(miss.getId());
-               insert(new StudentMissedClass(miss, schoolClass, $store.getNumberOfMissedClasses(miss.getId())));
-           }
-       }
-   end
 
 rule "setInactive"
      no-loop
@@ -152,6 +107,36 @@ rule "markAsAttended"
       }
   end
 
+rule "MissedClassesAggregation"
+     no-loop
+     when
+       ASchoolDayHasPassed()
+       $store: DataAccess()
+       not Token(
+              type == "MissedClassesAggregation"
+         )
+     then
+        insert(new Token("MissedClassesAggregation"));
+       for (SchoolClass schoolClass : $store.getActiveClasses()) {
+           List<Student> activeStudents = $store.getActiveStudents(schoolClass.getId());
+           List<Student> attendees = $store.getAttendees(schoolClass.getId());
+           for (Student attendee : new HashSet<>(attendees)) {
+               logger.log(attendee + " has attended class " + schoolClass);
+               insert(new StudentAttendedClass(attendee, schoolClass));
+           }
+
+           List<Student> misses = new ArrayList<>(activeStudents);
+           misses.removeAll(attendees);
+           for (Student miss : misses) {
+               logger.log(miss + " has missed class " + schoolClass);
+               $store.incrementClassesMissed(miss.getId());
+               insert(new StudentMissedClass(miss, schoolClass, $store.getNumberOfMissedClasses(miss.getId())));
+           }
+       }
+   end
+
+
+
 rule "TimeAggregation"
     no-loop
     when
@@ -202,6 +187,22 @@ rule "FailureToComplete"
         insert(new StudentLeaves($student, false));
     }
 end
+
+rule "Init"
+     no-loop
+     when
+       ASchoolDayHasPassed()
+       $store: DataAccess()
+       not Token(
+            type == "Init"
+       )
+     then
+       insert(new Token("Init"));
+       logger.log("Clearing store");
+       for (SchoolClass schoolClass : $store.getActiveClasses()) {
+           $store.clearAttendees(schoolClass.getId());
+       }
+   end
 
 rule "ReportAttendance"
     no-loop
