@@ -2,7 +2,6 @@ package com.github.liebharc.JavaRules;
 
 
 import com.github.liebharc.JavaRules.model.ReportStore;
-import com.github.liebharc.JavaRules.rules.ReportWriter;
 import com.github.liebharc.JavaRules.sharedknowledge.DataAccess;
 import org.kie.api.runtime.KieSession;
 import org.kie.api.runtime.process.ProcessContext;
@@ -12,6 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public abstract class RuleBase {
 
@@ -51,12 +51,12 @@ public abstract class RuleBase {
         }
 
         @Override
-        public<T> List<T> findAll(Class<T> clazz) {
+        public<T> Iterable<T> findAll(Class<T> clazz) {
             return (List<T> )facts.stream().filter(o -> clazz.isInstance(o)).collect(Collectors.toList());
         }
 
         @Override
-        public<T> List<T> findAll(Class<T> clazz, Predicate<? super T> predicate) {
+        public<T> Iterable<T> findAll(Class<T> clazz, Predicate<? super T> predicate) {
             return (List<T> )facts
                     .stream()
                     .filter(o -> clazz.isInstance(o) && predicate.test((T)o))
@@ -114,22 +114,34 @@ public abstract class RuleBase {
 
         private List<Token> tokens = new ArrayList<>();
 
+        private List<Object> objectsCache = null;
+
+        private ReportStore reportStore = null;
+
+        private Logger logger = null;
+
         private DroolsSession(KieSession session) {
             this.session = session;
         }
 
         @Override
-        public<T> List<T> findAll(Class<T> clazz) {
-            return (List<T> )session.getObjects().stream().filter(o -> clazz.isInstance(o)).collect(Collectors.toList());
+        public<T> Iterable<T> findAll(Class<T> clazz) {
+            return (Iterable<T> )this.getObjectsStream().filter(o -> clazz.isInstance(o)).collect(Collectors.toList());
         }
 
         @Override
-        public<T> List<T> findAll(Class<T> clazz, Predicate<? super T> predicate) {
-            return (List<T> )session
-                    .getObjects()
-                    .stream()
+        public<T> Iterable<T> findAll(Class<T> clazz, Predicate<? super T> predicate) {
+            return (List<T> )this.getObjectsStream()
                     .filter(o -> clazz.isInstance(o) && predicate.test((T)o))
                     .collect(Collectors.toList());
+        }
+
+        private Stream<Object> getObjectsStream() {
+            if (objectsCache == null) {
+                objectsCache = new ArrayList<>(session.getObjects());
+            }
+
+            return objectsCache.stream();
         }
 
         @Override
@@ -142,11 +154,18 @@ public abstract class RuleBase {
         @Override
         public void insert(Object obj) {
             session.insert(obj);
+            if (objectsCache != null) {
+                objectsCache.add(obj);
+            }
         }
 
         @Override
         public Logger getLogger() {
-            return (Logger)session.getGlobal("logger");
+            if (logger == null) {
+                logger = (Logger) session.getGlobal("logger");
+            }
+
+            return logger;
         }
 
         @Override
@@ -172,18 +191,19 @@ public abstract class RuleBase {
         }
 
         private DataAccess findDataAccess() {
-            for (Object o : session.getObjects()) {
-                if (o instanceof  DataAccess) {
-                    return (DataAccess)o;
-                }
-            }
-
-            return null;
+            return (DataAccess)this.getObjectsStream()
+                    .filter(o -> o instanceof  DataAccess)
+                    .findAny()
+                    .orElse(null);
         }
 
         @Override
         public ReportStore getReportStore() {
-            return (ReportStore)session.getGlobal("reports");
+            if (reportStore == null) {
+                reportStore = (ReportStore)session.getGlobal("reports");
+            }
+
+            return reportStore;
         }
     }
 }

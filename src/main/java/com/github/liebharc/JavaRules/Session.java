@@ -3,13 +3,14 @@ package com.github.liebharc.JavaRules;
 import com.github.liebharc.JavaRules.model.ReportStore;
 import com.github.liebharc.JavaRules.sharedknowledge.DataAccess;
 
+import java.util.Iterator;
 import java.util.List;
 import java.util.function.Predicate;
 
 public interface Session {
-    <T> List<T> findAll(Class<T> clazz);
+    <T> Iterable<T> findAll(Class<T> clazz);
 
-    <T> List<T> findAll(Class<T> clazz, Predicate<? super T> predicate);
+    <T> Iterable<T> findAll(Class<T> clazz, Predicate<? super T> predicate);
 
     boolean notExistsToken(Predicate<Token> predicate);
 
