@@ -62,7 +62,7 @@ public class StatelessDroolsEngine implements Engine {
 
     @Override
     public void process(Verb verb) {
-        StatelessKieSession kieSession = kieBase.newStatelessKieSession();
+        StatelessKieSession kieSession = kieSessionsPool.newStatelessKieSession();
         final List<Command> commands = new ArrayList<>(5);
         commands.add(CommandFactory.newSetGlobal("logger", logger));
         commands.add(CommandFactory.newSetGlobal("reports", reports));

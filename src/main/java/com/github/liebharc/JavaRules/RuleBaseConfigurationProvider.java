@@ -12,7 +12,7 @@ public class RuleBaseConfigurationProvider {
        if (!stateful) {
             configuration.setSequential(true);
         }
-        configuration.setSequentialAgenda(RuleBaseConfiguration.SequentialAgenda.DYNAMIC);
+        configuration.setSequentialAgenda(RuleBaseConfiguration.SequentialAgenda.SEQUENTIAL);
         return configuration;
     }
 }
