@@ -45,7 +45,7 @@ public class StatefulDroolsEngine implements Engine {
                     .toString());
             }
 
-            kieBase = (KnowledgeBaseImpl)kbuilder.newKnowledgeBase(RuleBaseConfigurationProvider.createRuleBaseConfiguration(true));
+            kieBase = (KnowledgeBaseImpl)kbuilder.newKnowledgeBase(RuleBaseConfigurationProvider.createRuleBaseConfiguration(false));
             kieSessionsPool = kieBase.newKieSessionsPool(1);
         } catch (IOException e) {
             throw new RuntimeException(e);

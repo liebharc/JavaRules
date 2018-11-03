@@ -7,11 +7,9 @@ import org.kie.internal.conf.IndexPrecedenceOption;
 import java.lang.reflect.Field;
 
 public class RuleBaseConfigurationProvider {
-    public static RuleBaseConfiguration createRuleBaseConfiguration(boolean stateful) {
+    public static RuleBaseConfiguration createRuleBaseConfiguration(boolean sequential) {
         RuleBaseConfiguration configuration = new RuleBaseConfiguration();
-       if (!stateful) {
-            configuration.setSequential(true);
-        }
+        configuration.setSequential(sequential);
         configuration.setSequentialAgenda(RuleBaseConfiguration.SequentialAgenda.SEQUENTIAL);
         return configuration;
     }

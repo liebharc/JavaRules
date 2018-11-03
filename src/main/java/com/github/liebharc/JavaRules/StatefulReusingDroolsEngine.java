@@ -48,7 +48,7 @@ public class StatefulReusingDroolsEngine implements Engine {
                     .toString());
             }
 
-            kieBase = kbuilder.newKnowledgeBase(RuleBaseConfigurationProvider.createRuleBaseConfiguration(true));
+            kieBase = kbuilder.newKnowledgeBase(RuleBaseConfigurationProvider.createRuleBaseConfiguration(false));
             kieSession = kieBase.newKieSession();
             resetter = new CustomSessionResetter((InternalKnowledgeBase)kieBase);
         } catch (IOException e) {

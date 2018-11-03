@@ -1,6 +1,7 @@
 package com.github.liebharc.JavaRules;
 
 
+import com.github.liebharc.JavaRules.TestBase;
 import com.github.liebharc.JavaRules.model.ModelFactory;
 import com.github.liebharc.JavaRules.model.ReportStore;
 import com.github.liebharc.JavaRules.sharedknowledge.DataStore;

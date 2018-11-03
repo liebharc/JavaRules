@@ -56,7 +56,7 @@ public class JbpmDroolsEngine implements Engine {
                         .toString());
             }
 
-            final KieBase kieBase = kbuilder.newKnowledgeBase(RuleBaseConfigurationProvider.createRuleBaseConfiguration(true));
+            final KieBase kieBase = kbuilder.newKnowledgeBase(RuleBaseConfigurationProvider.createRuleBaseConfiguration(false));
             kieSession = kieBase.newKieSession();
             kieSession.dispose();
             resetter = new CustomSessionResetter((InternalKnowledgeBase)kieBase);

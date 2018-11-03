@@ -53,11 +53,15 @@ public class StatelessDroolsEngine implements Engine {
                 throw new IllegalStateException("Can not initialize Drools: " + kbuilder.getErrors().toString());
             }
 
-            kieBase = (KnowledgeBaseImpl)kbuilder.newKnowledgeBase(RuleBaseConfigurationProvider.createRuleBaseConfiguration(false));
+            kieBase = (KnowledgeBaseImpl)kbuilder.newKnowledgeBase(this.createRuleBaseConfiguration());
             kieSessionsPool = kieBase.newKieSessionsPool(1);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    protected RuleBaseConfiguration createRuleBaseConfiguration() {
+        return RuleBaseConfigurationProvider.createRuleBaseConfiguration(false);
     }
 
     @Override
