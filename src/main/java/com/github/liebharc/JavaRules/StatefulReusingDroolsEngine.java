@@ -40,7 +40,7 @@ public class StatefulReusingDroolsEngine implements Engine {
             ClassLoader classloader = Thread
                 .currentThread()
                 .getContextClassLoader();
-            URL resource = classloader.getResource("rules.drl");
+            URL resource = classloader.getResource(getDroolsFile());
             kbuilder.add(ResourceFactory.newInputStreamResource(resource.openStream()), ResourceType.DRL);
             if (kbuilder.hasErrors()) {
                 throw new IllegalStateException("Can not initialize Drools: " + kbuilder
@@ -54,6 +54,10 @@ public class StatefulReusingDroolsEngine implements Engine {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    protected String getDroolsFile() {
+        return "rules.drl";
     }
 
     @Override

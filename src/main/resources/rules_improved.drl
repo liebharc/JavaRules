@@ -1,0 +1,219 @@
+package com.github.liebharc
+
+import com.github.liebharc.JavaRules.verbs.*
+import com.github.liebharc.JavaRules.model.*
+import com.github.liebharc.JavaRules.deduction.*
+import com.github.liebharc.JavaRules.Logger
+import com.github.liebharc.JavaRules.sharedknowledge.*
+import com.github.liebharc.JavaRules.Token
+import java.util.*
+
+global Logger logger
+global ReportStore reports
+
+rule "SignOn"
+     lock-on-active true
+     when
+       StudentJoinsAClass(
+            $student: student,
+            $classId: classId
+       )
+       $store: DataAccess()
+     then
+       logger.log("Student " + $student + " signed on to class " + $classId);
+       $store.assignStudent( $classId, $student);
+       $store.markStudentAsActive( $classId, $student);
+   end
+
+rule "SignOff"
+ lock-on-active true
+ when
+   StudentResignsFromClass(
+         $student: student,
+         $classId: classId
+    )
+   $store: DataAccess()
+ then
+   logger.log("Student " + $student + " signed off to class " + $classId);
+   $store.markStudentAsInactive( $classId, $student);
+   $store.unassignStudent( $classId, $student);
+end
+
+rule "setInactive"
+     lock-on-active true
+     when
+       StudentBecomesSick(
+        $student: student
+       )
+       $store: DataAccess()
+     then
+       logger.log("Student " + $student + " became sick");
+       for (SchoolClass schoolClass : $store.getAssignedClasses($student)) {
+           $store.markStudentAsInactive(schoolClass.getId(), $student);
+       }
+   end
+
+
+rule "setActive"
+     lock-on-active true
+     when
+       StudentReturnsFromSickness(
+        $student: student
+       )
+       $store: DataAccess()
+     then
+       logger.log("Student " + $student + " returned to classes");
+       for (SchoolClass schoolClass : $store.getAssignedClasses($student)) {
+           $store.markStudentAsActive(schoolClass.getId(), $student);
+       }
+   end
+
+rule "markAsAttended"
+    lock-on-active true
+    when
+        StudentAttendsAClass(
+         $student: student
+        )
+        $store: DataAccess()
+    then
+      logger.log("Student " + $student + " has attended class");
+      for (SchoolClass schoolClass : $store.getAssignedClasses($student)) {
+          $store.markAsAttended(schoolClass.getId(), $student);
+      }
+  end
+
+rule "MissedClassesAggregation"
+     lock-on-active true
+     when
+       ASchoolDayHasPassed()
+       $store: DataAccess()
+     then
+       for (SchoolClass schoolClass : $store.getActiveClasses()) {
+           List<Student> activeStudents = $store.getActiveStudents(schoolClass.getId());
+           List<Student> attendees = $store.getAttendees(schoolClass.getId());
+           for (Student attendee : new HashSet<>(attendees)) {
+               logger.log(attendee + " has attended class " + schoolClass);
+               insert(new StudentAttendedClass(attendee, schoolClass));
+           }
+
+           List<Student> misses = new ArrayList<>(activeStudents);
+           misses.removeAll(attendees);
+           for (Student miss : misses) {
+               logger.log(miss + " has missed class " + schoolClass);
+               $store.incrementClassesMissed(miss.getId());
+               insert(new StudentMissedClass(miss, schoolClass, $store.getNumberOfMissedClasses(miss.getId())));
+           }
+       }
+   end
+
+
+
+rule "TimeAggregation"
+    no-loop
+    when
+      ASchoolDayHasPassed()
+      $store: DataAccess()
+      $studentSchoolClassPair: StudentAttendedClass(
+            $student: student,
+            $schoolClass: schoolClass)
+    then
+     logger.log($student + " attended class "  + $schoolClass + " and got accounted "+ $schoolClass.getHoursADay());
+     $store.addStudyTime($student.getId(), $schoolClass.getHoursADay());
+     insert(new AggregatedTimeUpdate($student, $store.getStudyTime($student.getId())));
+  end
+
+rule "SuccessfulCompletion"
+    no-loop
+    when
+        AggregatedTimeUpdate(
+            $student: student,
+            $time: attendedTime)
+
+        $store: DataAccess()
+    then
+    if ($time > 10) {
+        logger.log("Student " + $student + " completed his studies");
+        for (SchoolClass schoolClass : $store.getAssignedClasses($student.getId())) {
+            $store.markStudentAsInactive(schoolClass.getId(), $student.getId());
+            $store.unassignStudent(schoolClass.getId(), $student.getId());
+        }
+        insert(new StudentLeaves($student, true));
+    }
+end
+
+rule "FailureToComplete"
+    no-loop
+    when
+        StudentMissedClass(
+            $student: student,
+            $misses: misses)
+        $store: DataAccess()
+    then
+    if ($misses >= 5) {
+        logger.log("Student " + $student + " missed too many classes");
+        for (SchoolClass schoolClass : $store.getAssignedClasses($student.getId())) {
+            $store.markStudentAsInactive(schoolClass.getId(), $student.getId());
+            $store.unassignStudent(schoolClass.getId(), $student.getId());
+        }
+        insert(new StudentLeaves($student, false));
+    }
+end
+
+rule "Init"
+     lock-on-active true
+     when
+       ASchoolDayHasPassed()
+       $store: DataAccess()
+     then
+       logger.log("Clearing store");
+       for (SchoolClass schoolClass : $store.getActiveClasses()) {
+           $store.clearAttendees(schoolClass.getId());
+       }
+   end
+
+rule "ReportAttendance"
+    no-loop
+    when
+       StudentAttendedClass(
+            $student: student,
+            $schoolClass: schoolClass
+        )
+    then
+    reports.writeReport($student.getId(), $student.getFirstName() + " attended class " + $schoolClass.getName());
+end
+
+rule "ReportMiss"
+    no-loop
+    when
+        StudentMissedClass(
+            $student: student,
+            $schoolClass: schoolClass)
+    then
+    reports.writeReport($student.getId(), $student.getFirstName() + " missed class " + $schoolClass.getName());
+end
+
+rule "ReportLeave"
+    no-loop
+    when
+        $leave: StudentLeaves(
+            $student: student
+        )
+    then
+    if ( $leave.isSuccessfulCompletion()) {
+        reports.writeReport($student.getId(), $student.getFirstName() + " completed his classes :)");
+    }
+    else {
+        reports.writeReport($student.getId(), $student.getFirstName() + " got expelled :(");
+    }
+end
+
+rule "ReportTime"
+    lock-on-active true
+    when
+        ASchoolDayHasPassed()
+        $store: DataAccess()
+    then
+    for (Student student : $store.getActiveStudents()) {
+        reports.writeReport(student.getId(), "A day passed");
+    }
+end
