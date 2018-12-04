@@ -3,31 +3,22 @@ package com.github.liebharc.JavaRules;
 import com.github.liebharc.JavaRules.model.ReportStore;
 import com.github.liebharc.JavaRules.sharedknowledge.DataStore;
 import com.github.liebharc.JavaRules.verbs.Verb;
-import org.drools.compiler.builder.impl.KnowledgeBuilderConfigurationImpl;
 import org.drools.compiler.builder.impl.KnowledgeBuilderImpl;
-import org.drools.core.RuleBaseConfiguration;
-import org.drools.core.impl.InternalKnowledgeBase;
+import org.drools.core.impl.KnowledgeBaseImpl;
 import org.drools.core.impl.StatefulKnowledgeSessionImpl;
-import org.kie.api.KieBase;
 import org.kie.api.io.ResourceType;
-import org.kie.api.runtime.KieSession;
-import org.kie.internal.builder.KnowledgeBuilder;
-import org.kie.internal.builder.KnowledgeBuilderConfiguration;
+import org.kie.api.runtime.KieSessionsPool;
 import org.kie.internal.builder.KnowledgeBuilderFactory;
 import org.kie.internal.io.ResourceFactory;
 
 import java.io.IOException;
 import java.net.URL;
-import java.util.Properties;
 
 public class StatefulReusingDroolsEngine implements Engine {
 
     private final DataStore store;
     private final ReportStore reports;
-    private final CustomSessionResetter resetter;
-
-    private KieBase kieBase;
-    private KieSession kieSession;
+    private final KieSessionsPool kieSessionsPool;
 
     private Logger logger = new Logger(StatefulReusingDroolsEngine.class);
 
@@ -35,7 +26,7 @@ public class StatefulReusingDroolsEngine implements Engine {
         this.store = store;
         this.reports = reports;
         try {
-            KnowledgeBuilderImpl kbuilder = (KnowledgeBuilderImpl)KnowledgeBuilderFactory.newKnowledgeBuilder();
+            KnowledgeBuilderImpl kbuilder = (KnowledgeBuilderImpl) KnowledgeBuilderFactory.newKnowledgeBuilder();
             ClassLoader classloader = Thread
                 .currentThread()
                 .getContextClassLoader();
@@ -47,9 +38,8 @@ public class StatefulReusingDroolsEngine implements Engine {
                     .toString());
             }
 
-            kieBase = kbuilder.newKnowledgeBase(RuleBaseConfigurationProvider.createRuleBaseConfiguration(false));
-            kieSession = kieBase.newKieSession();
-            resetter = new CustomSessionResetter((InternalKnowledgeBase)kieBase);
+            final KnowledgeBaseImpl kieBase = (KnowledgeBaseImpl) kbuilder.newKnowledgeBase(RuleBaseConfigurationProvider.createRuleBaseConfiguration(false));
+            kieSessionsPool = kieBase.newKieSessionsPool(1);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -61,11 +51,15 @@ public class StatefulReusingDroolsEngine implements Engine {
 
     @Override
     public void process(Verb verb) {
-        ((StatefulKnowledgeSessionImpl)kieSession).reset();
-        kieSession.setGlobal("logger", logger);
-        kieSession.insert(verb);
-        kieSession.insert(store);
-        kieSession.setGlobal("reports", reports);
-        kieSession.fireAllRules();
+        final StatefulKnowledgeSessionImpl kieSession = (StatefulKnowledgeSessionImpl) kieSessionsPool.newKieSession();
+        try {
+            kieSession.setGlobal("logger", logger);
+            kieSession.insert(verb);
+            kieSession.insert(store);
+            kieSession.setGlobal("reports", reports);
+            kieSession.fireAllRules();
+        } finally {
+            kieSession.dispose();
+        }
     }
 }
