@@ -32,7 +32,6 @@ public class StatefulReusingDroolsEngine implements Engine {
     private Logger logger = new Logger(StatefulReusingDroolsEngine.class);
 
     public StatefulReusingDroolsEngine(DataStore store, ReportStore reports) {
-
         this.store = store;
         this.reports = reports;
         try {
