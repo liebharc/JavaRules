@@ -19,6 +19,20 @@ Time total: 20037 ms
 Memory per iteration: 12 KB/Iteration
 Time total per 1000 iterations: 9 ms/1000Iterations
 
+=== StatefulReusingDroolsEngineWithMvel ===
+Iterations: 2100020
+Memory total: 38 GB
+Time total: 33761 ms
+Memory per iteration: 19 KB/Iteration
+Time total per 1000 iterations: 16 ms/1000Iterations
+
+=== StatefulReusingDroolsEngineWithRuleImprovements ===
+Iterations: 2100020
+Memory total: 19 GB
+Time total: 15353 ms
+Memory per iteration: 9 KB/Iteration
+Time total per 1000 iterations: 7 ms/1000Iterations
+
 === JbpmDroolsEngine ===
 Iterations: 2100020
 Memory total: 38 GB
