@@ -57,7 +57,7 @@ public class JbpmDroolsEngine implements Engine {
             kieSession.insert(verb);
             kieSession.insert(store);
             kieSession.setGlobal("reports", reports);
-            kieSession.fireAllRules();
+            kieSession.startProcess("com.github.liebharc.JavaRules.ScriptTaskTest");
         } finally {
             kieSession.dispose();
         }
