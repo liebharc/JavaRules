@@ -3,17 +3,18 @@ package com.github.liebharc.JavaRules;
 import com.github.liebharc.JavaRules.deduction.Facts;
 import com.github.liebharc.JavaRules.model.ReportStore;
 import com.github.liebharc.JavaRules.rules.*;
+import com.github.liebharc.JavaRules.sharedknowledge.DataAccess;
 import com.github.liebharc.JavaRules.sharedknowledge.DataAccessImpl;
 import com.github.liebharc.JavaRules.sharedknowledge.DataStore;
 import com.github.liebharc.JavaRules.verbs.Verb;
 
 public class JavaRulesEngine implements Engine {
 
-    private DataStore store;
+    private DataAccess store;
 
     private InterferenceStep[] rules;
 
-    public JavaRulesEngine(DataStore store, ReportStore reports) {
+    public JavaRulesEngine(DataAccess store, ReportStore reports) {
 
         this.store = store;
 

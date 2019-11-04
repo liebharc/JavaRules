@@ -3,12 +3,14 @@ package com.github.liebharc.JavaRules;
 import com.github.liebharc.JavaRules.model.ModelFactory;
 import com.github.liebharc.JavaRules.model.ReportStore;
 import com.github.liebharc.JavaRules.model.ReportStoreImpl;
+import com.github.liebharc.JavaRules.sharedknowledge.DataAccess;
 import com.github.liebharc.JavaRules.sharedknowledge.DataStore;
+import com.github.liebharc.JavaRules.sharedknowledge.SnapshotDataStore;
 import org.junit.*;
 
 public abstract class TestBase {
 
-    protected DataStore dataStore;
+    protected DataAccess dataStore;
     protected ModelFactory registration;
     protected long schoolClass;
     protected long anotherSchoolClass;
@@ -22,7 +24,7 @@ public abstract class TestBase {
     @Before
     public void setupAClass() {
         Logger.setQuiteMode(false);
-        dataStore = new DataStore();
+        dataStore = new SnapshotDataStore();
         registration = new ModelFactory();
         schoolClass = dataStore.store(registration.newClass("5-1", 2));
         anotherSchoolClass = dataStore.store(registration.newClass("5-2", 3));

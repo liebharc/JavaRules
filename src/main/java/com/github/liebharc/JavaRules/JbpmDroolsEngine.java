@@ -1,6 +1,7 @@
 package com.github.liebharc.JavaRules;
 
 import com.github.liebharc.JavaRules.model.ReportStore;
+import com.github.liebharc.JavaRules.sharedknowledge.DataAccess;
 import com.github.liebharc.JavaRules.sharedknowledge.DataStore;
 import com.github.liebharc.JavaRules.verbs.Verb;
 import org.drools.compiler.builder.impl.KnowledgeBuilderImpl;
@@ -15,13 +16,13 @@ import java.io.IOException;
 
 public class JbpmDroolsEngine implements Engine {
 
-    private final DataStore store;
+    private final DataAccess store;
     private final ReportStore reports;
     private final KieSessionsPool kieSessionsPool;
 
     private Logger logger = new Logger(StatefulReusingDroolsEngine.class);
 
-    public JbpmDroolsEngine(DataStore store, ReportStore reports) {
+    public JbpmDroolsEngine(DataAccess store, ReportStore reports) {
         this.store = store;
         this.reports = reports;
 

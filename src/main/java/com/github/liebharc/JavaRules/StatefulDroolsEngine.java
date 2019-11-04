@@ -1,6 +1,7 @@
 package com.github.liebharc.JavaRules;
 
 import com.github.liebharc.JavaRules.model.ReportStore;
+import com.github.liebharc.JavaRules.sharedknowledge.DataAccess;
 import com.github.liebharc.JavaRules.sharedknowledge.DataStore;
 import com.github.liebharc.JavaRules.verbs.Verb;
 import org.drools.compiler.builder.impl.KnowledgeBuilderImpl;
@@ -19,7 +20,7 @@ import java.net.URL;
 
 public class StatefulDroolsEngine implements Engine {
 
-    private final DataStore store;
+    private final DataAccess store;
     private final ReportStore reports;
     private final KieSessionsPool kieSessionsPool;
 
@@ -27,7 +28,7 @@ public class StatefulDroolsEngine implements Engine {
 
     private Logger logger = new Logger(StatefulDroolsEngine.class);
 
-    public StatefulDroolsEngine(DataStore store, ReportStore reports) {
+    public StatefulDroolsEngine(DataAccess store, ReportStore reports) {
 
         this.store = store;
         this.reports = reports;

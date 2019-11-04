@@ -1,6 +1,7 @@
 package com.github.liebharc.JavaRules;
 
 import com.github.liebharc.JavaRules.model.ReportStore;
+import com.github.liebharc.JavaRules.sharedknowledge.DataAccess;
 import com.github.liebharc.JavaRules.sharedknowledge.DataStore;
 import com.github.liebharc.JavaRules.verbs.Verb;
 import org.drools.compiler.builder.impl.KnowledgeBuilderImpl;
@@ -17,7 +18,7 @@ import java.net.URL;
 
 public class StatefulReusingDroolsEngineWithRuleImprovements extends StatefulReusingDroolsEngine {
 
-    public StatefulReusingDroolsEngineWithRuleImprovements(DataStore store, ReportStore reports) {
+    public StatefulReusingDroolsEngineWithRuleImprovements(DataAccess store, ReportStore reports) {
         super(store, reports);
     }
 

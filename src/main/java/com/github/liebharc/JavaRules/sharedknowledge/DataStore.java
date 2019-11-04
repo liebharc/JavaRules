@@ -17,9 +17,9 @@ public class DataStore implements DataAccess {
 
     private Map<Long, List<Student>> attendees = new HashMap<>();
 
-    public Map<Long, Integer> studyTimes = new HashMap<>();
+    private Map<Long, Integer> studyTimes = new HashMap<>();
 
-    public Map<Long, Integer> classesMissed = new HashMap<>();
+    private Map<Long, Integer> classesMissed = new HashMap<>();
 
     @Override
     public List<SchoolClass> getAssignedClasses(long studentId)  {
@@ -140,10 +140,12 @@ public class DataStore implements DataAccess {
         return missed;
     }
 
+    @Override
     public boolean isAssigned(Long student, Long schoolClass) {
         return contains(assignedStudents, student, schoolClass);
     }
 
+    @Override
     public boolean isActive(Long student, Long schoolClass) {
         return contains(activeStudents, student, schoolClass);
     }
@@ -170,11 +172,13 @@ public class DataStore implements DataAccess {
         // Ignoring error handling in this example
     }
 
+    @Override
     public long store(SchoolClass schoolClass) {
         classes.put(schoolClass.getId(), schoolClass);
         return schoolClass.getId();
     }
 
+    @Override
     public long store(Student student) {
         students.put(student.getId(), student);
         return student.getId();

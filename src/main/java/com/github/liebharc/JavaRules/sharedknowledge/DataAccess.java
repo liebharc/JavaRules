@@ -3,16 +3,17 @@ package com.github.liebharc.JavaRules.sharedknowledge;
 import com.github.liebharc.JavaRules.model.SchoolClass;
 import com.github.liebharc.JavaRules.model.Student;
 
+import java.util.Collection;
 import java.util.List;
 
 public interface DataAccess  {
-    List<SchoolClass> getAssignedClasses(long studentId);
+    Collection<SchoolClass> getAssignedClasses(long studentId);
 
-    List<Student> getActiveStudents(long classId);
+    Collection<Student> getActiveStudents(long classId);
 
-    List<Student> getActiveStudents();
+    Collection<Student> getActiveStudents();
 
-    List<SchoolClass> getActiveClasses();
+    Collection<SchoolClass> getActiveClasses();
 
     void assignStudent(long schoolClass, long student);
 
@@ -22,7 +23,7 @@ public interface DataAccess  {
 
     void clearAttendees(long schoolClass);
 
-    List<Student> getAttendees(long schoolClass);
+    Collection<Student> getAttendees(long schoolClass);
 
     void markStudentAsActive(long schoolClass, long student);
 
@@ -35,4 +36,12 @@ public interface DataAccess  {
     void incrementClassesMissed(long student);
 
     int getNumberOfMissedClasses(long student);
+
+    boolean isAssigned(Long student, Long schoolClass);
+
+    boolean isActive(Long student, Long schoolClass);
+
+    long store(SchoolClass schoolClass);
+
+    long store(Student student);
 }

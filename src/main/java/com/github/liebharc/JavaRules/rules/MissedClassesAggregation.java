@@ -24,8 +24,8 @@ public class MissedClassesAggregation implements InterferenceStep {
 
         DataAccess store = facts.getStore();
         for (SchoolClass schoolClass : store.getActiveClasses()) {
-            List<Student> activeStudents = store.getActiveStudents(schoolClass.getId());
-            List<Student> attendees = store.getAttendees(schoolClass.getId());
+            Collection<Student> activeStudents = store.getActiveStudents(schoolClass.getId());
+            Collection<Student> attendees = store.getAttendees(schoolClass.getId());
             for (Student attendee : new HashSet<>(attendees)) {
                 logger.log(attendee + " has attended class " + schoolClass);
                 facts.add(new StudentAttendedClass(attendee, schoolClass));

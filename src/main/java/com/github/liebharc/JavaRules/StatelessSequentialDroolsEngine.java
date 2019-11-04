@@ -1,6 +1,7 @@
 package com.github.liebharc.JavaRules;
 
 import com.github.liebharc.JavaRules.model.ReportStore;
+import com.github.liebharc.JavaRules.sharedknowledge.DataAccess;
 import com.github.liebharc.JavaRules.sharedknowledge.DataStore;
 import com.github.liebharc.JavaRules.verbs.Verb;
 import org.drools.compiler.builder.impl.KnowledgeBuilderImpl;
@@ -22,7 +23,7 @@ import java.util.List;
 public class StatelessSequentialDroolsEngine extends StatelessDroolsEngine {
 
 
-    public StatelessSequentialDroolsEngine(DataStore store, ReportStore reports) {
+    public StatelessSequentialDroolsEngine(DataAccess store, ReportStore reports) {
         super(store, reports);
     }
 
