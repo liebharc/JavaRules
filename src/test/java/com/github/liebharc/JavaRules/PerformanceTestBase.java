@@ -45,7 +45,7 @@ public abstract class PerformanceTestBase extends TestBase {
             measurement.process(new ASchoolDayHasPassed());
         }
 
-        System.out.println("=== " + engine.getClass().getSimpleName() + " ===");
+        System.out.println("=== " + engine.getClass().getSimpleName() + ", " + dataStore.getClass().getSimpleName() + " ===");
         System.out.println(measurement);
     }
 

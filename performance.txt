@@ -1,57 +1,64 @@
-=== StatefulDroolsEngine ===
+=== StatelessSequentialDroolsEngine, DataStore ===
+Iterations: 2100020
+Memory total: 23 GB
+Time total: 28519 ms
+Memory per iteration: 11 KB/Iteration
+Time total per 1000 iterations: 13 ms/1000Iterations
+
+=== StatelessDroolsEngine, DataStore ===
 Iterations: 2100020
 Memory total: 24 GB
-Time total: 21906 ms
+Time total: 32404 ms
 Memory per iteration: 12 KB/Iteration
+Time total per 1000 iterations: 15 ms/1000Iterations
+
+=== StatefulDroolsEngine, DataStore ===
+Iterations: 2100020
+Memory total: 21 GB
+Time total: 27296 ms
+Memory per iteration: 10 KB/Iteration
+Time total per 1000 iterations: 12 ms/1000Iterations
+
+=== StatefulReusingDroolsEngineWithMvel, DataStore ===
+Iterations: 2100020
+Memory total: 31 GB
+Time total: 43840 ms
+Memory per iteration: 15 KB/Iteration
+Time total per 1000 iterations: 20 ms/1000Iterations
+
+=== StatefulReusingDroolsEngineWithRuleImprovements, SnapshotDataStore ===
+Iterations: 2100020
+Memory total: 18 GB
+Time total: 22507 ms
+Memory per iteration: 9 KB/Iteration
 Time total per 1000 iterations: 10 ms/1000Iterations
 
-=== StatelessDroolsEngine ===
+=== StatefulReusingDroolsEngine, DataStore ===
 Iterations: 2100020
-Memory total: 29 GB
-Time total: 25177 ms
-Memory per iteration: 14 KB/Iteration
-Time total per 1000 iterations: 11 ms/1000Iterations
+Memory total: 21 GB
+Time total: 27669 ms
+Memory per iteration: 10 KB/Iteration
+Time total per 1000 iterations: 13 ms/1000Iterations
 
-=== StatefulReusingDroolsEngine ===
+=== JbpmDroolsEngine, DataStore ===
 Iterations: 2100020
-Memory total: 25 GB
-Time total: 20037 ms
-Memory per iteration: 12 KB/Iteration
-Time total per 1000 iterations: 9 ms/1000Iterations
-
-=== StatefulReusingDroolsEngineWithMvel ===
-Iterations: 2100020
-Memory total: 38 GB
-Time total: 33761 ms
-Memory per iteration: 19 KB/Iteration
+Memory total: 30 GB
+Time total: 34727 ms
+Memory per iteration: 15 KB/Iteration
 Time total per 1000 iterations: 16 ms/1000Iterations
 
-=== StatefulReusingDroolsEngineWithRuleImprovements ===
+=== JbpmDroolsEngineJavaOnly, DataStore ===
 Iterations: 2100020
-Memory total: 19 GB
-Time total: 15353 ms
-Memory per iteration: 9 KB/Iteration
-Time total per 1000 iterations: 7 ms/1000Iterations
+Memory total: 14 GB
+Time total: 6537 ms
+Memory per iteration: 7 KB/Iteration
+Time total per 1000 iterations: 3 ms/1000Iterations
 
-=== JbpmDroolsEngine ===
+=== JavaRulesEngine, DataStore ===
 Iterations: 2100020
-Memory total: 38 GB
-Time total: 20979 ms
-Memory per iteration: 19 KB/Iteration
-Time total per 1000 iterations: 9 ms/1000Iterations
-
-=== JbpmDroolsEngineJavaOnly ===
-Iterations: 2100020
-Memory total: 17 GB
-Time total: 3920 ms
-Memory per iteration: 8 KB/Iteration
-Time total per 1000 iterations: 1 ms/1000Iterations
-
-=== JavaRulesEngine ===
-Iterations: 2100020
-Memory total: 13 GB
-Time total: 3418 ms
-Memory per iteration: 6 KB/Iteration
-Time total per 1000 iterations: 1 ms/1000Iterations
+Memory total: 10 GB
+Time total: 4355 ms
+Memory per iteration: 5 KB/Iteration
+Time total per 1000 iterations: 2 ms/1000Iterations
 
 -> Plain java performs best in this benchmark. We have 14 rules, with more rules Drools would very likely outperform Java.

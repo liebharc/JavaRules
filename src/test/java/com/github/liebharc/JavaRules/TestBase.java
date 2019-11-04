@@ -24,7 +24,7 @@ public abstract class TestBase {
     @Before
     public void setupAClass() {
         Logger.setQuiteMode(false);
-        dataStore = new SnapshotDataStore();
+        dataStore = createDataStore();
         registration = new ModelFactory();
         schoolClass = dataStore.store(registration.newClass("5-1", 2));
         anotherSchoolClass = dataStore.store(registration.newClass("5-2", 3));
@@ -38,4 +38,7 @@ public abstract class TestBase {
 
     protected abstract Engine createEngine(ReportStore reports);
 
+    protected DataAccess createDataStore() {
+        return new DataStore();
+    }
 }
